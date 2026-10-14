@@ -1,0 +1,49 @@
+#=============================================================================
+# .gitattributes — 统一换行符（跨 Mac / Windows 协作的关键）
+#-----------------------------------------------------------------------------
+# 为什么必须有这个文件：
+#
+#   Windows 默认用 CRLF（\r\n）作换行，Mac/Linux 用 LF（\n）。
+#   两边不统一会出两类恶心的问题：
+#
+#   1. shell 脚本在 Mac 上直接跑不起来，报：
+#          /bin/sh^M: bad interpreter: No such file or directory
+#      那个 ^M 就是多出来的 \r。这种错误看着像玄学，其实纯是换行符。
+#
+#   2. git diff 会把整个文件标成"全改了"，看不出真正改了哪几行。
+#      这会毁掉历史记录的价值 —— 而"看清改了什么"正是用 git 的核心目的。
+#
+# 解决：所有文本文件强制 LF。Vivado 读 LF 的 .v / .xdc 完全没问题。
+# 这个文件的规则优先于 core.autocrlf 设置。
+#=============================================================================
+
+# 默认：自动判断是否文本，检出时一律用 LF
+* text=auto eol=lf
+
+# 明确列出（防止个别机器的 autocrlf 设置干扰）
+*.v        text eol=lf
+*.sv       text eol=lf
+*.vh       text eol=lf
+*.xdc      text eol=lf
+*.tcl      text eol=lf
+*.sh       text eol=lf
+*.py       text eol=lf
+*.md       text eol=lf
+*.txt      text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+Makefile   text eol=lf
+
+# 二进制文件：不要做任何换行符转换（否则文件会损坏）
+*.bit      binary
+*.dcp      binary
+*.bin      binary
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.pdf      binary
+*.vcd      binary
+*.zstd     binary
+
+# git diff 时把锁文件当二进制，不显示内容差异
+*.vvp      binary
