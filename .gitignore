@@ -59,3 +59,9 @@ vivado_*.backup.log
 # ── 系统文件 ──────────────────────────────────
 .DS_Store
 Thumbs.db
+
+# ── 临时交接文件（AI 写了给人双击用的，不该入库）──
+# 2026-10-14：Windows 侧 DSH 的 shell 不可用，曾生成这两个文件让用户手动
+# commit；用完即废，内容已清空，留着只是防止误提交。
+commit-and-push.bat
+docs/.commit-msg.tmp

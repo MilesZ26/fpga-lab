@@ -17,18 +17,25 @@ LED 只是用来证明"时钟 → 复位 → 约束 → 仿真 → 综合 → �
 
 ## 验收标准
 
-- [ ] `make setup` 成功（装好 iverilog）
-- [ ] `make sim` 全部通过
-- [ ] `build/tb_blinky.vcd` 生成，波形里能看到 led 周期翻转
-- [ ] `make lint` 无警告
-- [ ] （需要 Windows）Vivado 综合通过
-- [ ] （需要 Windows）XDC 引脚填对，板子上 LED 真的在闪
-- [ ] `docs/进度.md` 更新
+- [x] `make setup` 成功（装好 iverilog）
+- [x] `make sim` 全部通过
+- [x] `build/tb_blinky.vcd` 生成，波形里能看到 led 周期翻转
+- [x] `make lint` 无警告
+- [x] （需要 Windows）Vivado 综合通过
+- [x] （需要 Windows）XDC 引脚填对，板子上 LED 真的在闪 ← **2026-10-14 实测：1 Hz 闪烁**
+- [x] `docs/进度.md` 更新
+- [ ] **（欠账）** `logs/s00_blinky/` 里的综合日志 / 时序报告 / 资源报告 —— 见
+      [../docs/上板指南.md](../docs/上板指南.md) 第 6 步
+
+> **这一阶段的意义**：LED 不是目的，**闭环**才是。截至 2026-10-14，
+> 从 `make sim` 到"板子上灯真的闪"整条路都通了 ——
+> 后面每个 stage 都直接复用这条路，不用再摸索工具链。
 
 ## 待你提供
 
-- 开发板型号 + **板载时钟频率**
-- 时钟引脚 / LED 引脚 / 复位按键引脚（查原理图）
+- ~~开发板型号 + 板载时钟频率~~ → ✅ 正点原子达芬奇 Pro / **50 MHz**
+- ~~时钟引脚 / LED 引脚 / 复位按键引脚~~ → ✅ **R4 / V9 / U7**（已上板验证）
+- ~~Vivado 器件全名~~ → ✅ **`xc7a100tfgg484-2`**（100T / fgg484 / -2）
 
 没有这些也能推进 —— 仿真不需要板子，`constr/blinky.xdc` 里的 TODO 先留着。
 

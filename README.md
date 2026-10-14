@@ -3,7 +3,8 @@
 **方向：5G 基带数据通路**
 NCO → 复数混频 → FIR → 插值/抽取 → DUC / DDC
 
-**当前：Stage 0 已完成（验证闭环 + LED），正在做 Stage 1 — NCO**
+**当前：Stage 0 已完成 —— 仿真闭环 + LED 已上板验证（板子上真的 1 Hz 闪）**，
+下一步做 **Stage 1 — NCO**
 
 - 完整规划 → [docs/路线图.md](docs/路线图.md)
 - 当前状态 → [docs/进度.md](docs/进度.md) ← **每次开工先读这个**
@@ -46,16 +47,19 @@ make wave VCD=build/tb_blinky.vcd        # 用 Surfer 看波形
 ## 这个仓库怎么用（两台机器）
 
 **这台 Mac 是主战场**：写 RTL、跑仿真，秒级迭代。
-**Windows 机器只是 Vivado 执行机**：综合、实现、上板。
+**Windows 机器负责综合/上板，也能改文档**（装了 DSH + GitHub Desktop）。
 
 ```
-Mac（写代码 + 跑仿真）                    Windows（只跑 Vivado）
-────────────────────                      ──────────────────────
+Mac（写代码 + 跑仿真）                    Windows（Vivado 上板 + 文档）
+────────────────────                      ──────────────────────────
 改 RTL → iverilog 仿真（1~5 秒）
 git commit && push  ───────────────────→  git pull → 综合/实现/上板
                     ←─────────────────  日志/report 放进 logs/ 再 push
 git pull → 读日志分析
 ```
+
+> ✅ **上板这条路 2026-10-14 已经走通**（Vivado 2020.2，板子上 LED 真的在闪）。
+> 后面每个 stage 直接复用 [上板指南](docs/上板指南.md)，不用再摸索工具链。
 
 ### ⚠️ 只用 git 传文件，不要用网盘
 
