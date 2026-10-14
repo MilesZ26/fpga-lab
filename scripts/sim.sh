@@ -119,7 +119,8 @@ done
 echo ""
 echo "══════════════════════════════════════════════"
 if [ "$FAILED" -eq 0 ]; then
-    echo "结果：全部通过（$TOTAL/$TOTAL）"
+    # 注意 ${TOTAL} 必须带花括号：见 docs/进度.md「已知坑 4」
+    echo "结果：全部通过（${TOTAL}/${TOTAL}）"
     exit 0
 else
     echo "结果：失败 $FAILED / $TOTAL"

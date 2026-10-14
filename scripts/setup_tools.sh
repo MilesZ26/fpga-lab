@@ -77,7 +77,7 @@ mkdir -p "$TOOLS/src"
 # ---- 第一步：bison（iverilog 的语法分析器生成器）----
 pick_bison
 if [ -n "$BISON_BIN" ]; then
-    echo "✓ bison 够新，直接用：$BISON_BIN（$("$BISON_BIN" --version | head -1)）"
+    echo "✓ bison 够新，直接用：${BISON_BIN}（$("$BISON_BIN" --version | head -1)）"
 else
     echo "→ 系统 bison 版本过低（$(bison --version 2>/dev/null | head -1 || true)），源码编译 bison $BISON_TAG"
     BISON_URL="https://ftp.gnu.org/gnu/bison/bison-${BISON_TAG}.tar.gz"
@@ -132,7 +132,7 @@ echo "→ configure（安装到 $TOOLS/iverilog）"
 }
 
 JOBS=$(sysctl -n hw.ncpu 2>/dev/null || echo 4)
-echo "→ 编译（-j$JOBS，几分钟）"
+echo "→ 编译（-j${JOBS}，几分钟）"
 make -j"$JOBS" > "$TOOLS/src/make.log" 2>&1 || {
     echo "✗ 编译失败，见 $TOOLS/src/make.log" >&2
     tail -30 "$TOOLS/src/make.log" >&2
