@@ -9,6 +9,7 @@ NCO → 复数混频 → FIR → 插值/抽取 → DUC / DDC
 - 当前状态 → [docs/进度.md](docs/进度.md) ← **每次开工先读这个**
 - 工具链情况 → [docs/环境.md](docs/环境.md)
 - 两台机器怎么同步 → [docs/同步指南.md](docs/同步指南.md)
+- **怎么上板（Vivado 全流程） → [docs/上板指南.md](docs/上板指南.md)**
 
 ---
 
@@ -87,11 +88,13 @@ fpga-lab/
 │   ├── 进度.md            ← 状态文件，每次开工先读、收工更新
 │   ├── 路线图.md          ← 阶段规划与验收标准
 │   ├── 环境.md            ← 工具链现状与安装说明
+│   ├── 上板指南.md        ← Windows/Vivado 从零上板全流程
 │   └── 同步指南.md        ← Mac ↔ Windows 的 git 同步
 ├── scripts/
 │   ├── sim.sh             ← 一键仿真（自动发现所有 tb_*.v）
 │   ├── lint.sh            ← 静态检查
-│   └── setup_tools.sh     ← 安装仿真器
+│   ├── setup_tools.sh     ← 安装仿真器
+│   └── hooks/pre-commit   ← git 守卫（make hooks 安装）
 ├── rtl/common/            ← 跨模块复用的小件
 │   ├── reset_sync.v       ← 异步复位、同步释放
 │   ├── edge_detect.v      ← 边沿检测
