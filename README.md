@@ -1,12 +1,14 @@
-# fpga-lab — FPGA 复习实验室
+# fpga-lab — FPGA 基带链路复健
 
-复习方向：**通用数字设计 + 接口**（UART / SPI / I2C / AXI / DDR）
+**方向：5G 基带数据通路**
+NCO → 复数混频 → FIR → 插值/抽取 → DUC / DDC
 
-当前范围：**Stage 0（验证闭环） + Stage 1（时序基本功 + UART）**
+**当前：Stage 0 已完成（验证闭环 + LED），正在做 Stage 1 — NCO**
 
 - 完整规划 → [docs/路线图.md](docs/路线图.md)
 - 当前状态 → [docs/进度.md](docs/进度.md) ← **每次开工先读这个**
 - 工具链情况 → [docs/环境.md](docs/环境.md)
+- 两台机器怎么同步 → [docs/同步指南.md](docs/同步指南.md)
 
 ---
 
@@ -29,12 +31,13 @@
 ## 快速开始
 
 ```sh
-make            # 看所有可用命令
-make setup      # 首次使用：安装仿真器（只需一次）
-make sim        # 跑全部 testbench
+make                    # 看所有可用命令
+make setup              # 首次使用：安装仿真器（只需一次）
+make sim                # 跑全部 testbench
 make sim TB=s00_blinky/tb/tb_blinky.v    # 只跑一个
-make lint       # 静态检查
-make list       # 列出所有 testbench
+make lint               # 静态检查
+make list               # 列出所有 testbench
+make wave VCD=build/tb_blinky.vcd        # 用 Surfer 看波形
 ```
 
 ---
@@ -70,6 +73,8 @@ git pull → 读日志分析
 
 Mac 这边我 `git pull` 之后用 grep 读日志 —— 不要往聊天里粘贴几万行的报告。
 
+详细的 git 操作见 [docs/同步指南.md](docs/同步指南.md)。
+
 ---
 
 ## 目录结构
@@ -80,26 +85,38 @@ fpga-lab/
 ├── Makefile               ← 统一入口
 ├── docs/
 │   ├── 进度.md            ← 状态文件，每次开工先读、收工更新
-│   ├── 路线图.md          ← Stage 0~6 规划与验收标准
-│   └── 环境.md            ← 工具链现状与安装说明
+│   ├── 路线图.md          ← 阶段规划与验收标准
+│   ├── 环境.md            ← 工具链现状与安装说明
+│   └── 同步指南.md        ← Mac ↔ Windows 的 git 同步
 ├── scripts/
 │   ├── sim.sh             ← 一键仿真（自动发现所有 tb_*.v）
 │   ├── lint.sh            ← 静态检查
 │   └── setup_tools.sh     ← 安装仿真器
-├── rtl/common/            ← 跨项目复用的小模块
+├── rtl/common/            ← 跨模块复用的小件
 │   ├── reset_sync.v       ← 异步复位、同步释放
 │   ├── edge_detect.v      ← 边沿检测
 │   └── sync_2ff.v         ← 两级同步器（CDC）
-├── tb/
-│   ├── tb_common.vh       ← 仿真公共任务（check / check_eq / tb_done）
-│   └── tb_edge_detect.v   ← rtl/common 的自测
-├── s00_blinky/            ← Stage 0：LED + 验证闭环
-├── s01_shift_led/         ← Stage 1：参数化流水灯
-├── s01_pwm/               ← Stage 1：PWM 调光
-├── s01_debounce/          ← Stage 1：按键消抖
-├── s01_uart/              ← Stage 1：UART 收发（后面所有调试的眼睛）
+├── tb/                    ← 公共 testbench
+│   ├── tb_common.vh       ← 断言宏（check / check_eq / tb_done）
+│   ├── tb_edge_detect.v
+│   ├── tb_reset_sync.v
+│   └── tb_sync_2ff.v
+├── s00_blinky/            ← Stage 0：点亮 LED + 验证闭环
+├── s01_nco/               ← Stage 1：NCO（相位累加器 + 查表）
 ├── logs/                  ← Windows 侧拿回来的 Vivado 日志与报告
 └── ref/                   ← Python 参考模型、脚本
 ```
 
-每个 `sXX_*/TASK.md` 是这个子任务的目标、验收标准和提示。
+**每个 `sNN_*/` 下固定三个部分**：`rtl/`（设计）、`tb/`（测试）、`TASK.md`（目标与验收标准）。
+一个模块 = 一个 stage = 一个目录。
+
+## 开发约定（摘要）
+
+完整版见 [AGENTS.md](AGENTS.md)。几条要紧的：
+
+- **Verilog-2001**（`iverilog -g2005`），不用 SystemVerilog 语法
+- **每写一个模块就必须配一个 testbench**，没有测试的 RTL 视为未完成
+- **RTL 改动后必须跑 `make sim` 并通过**，不许用"看起来对"结案
+- 断言用 `tb/tb_common.vh` 里的 `` `check() `` / `` `check_eq() ``（是宏，要写反引号）
+- 复位统一 `rst_n`：低有效、异步复位、同步释放，走 `rtl/common/reset_sync.v`
+- 跨时钟域必须显式处理，注释标 `// CDC:`

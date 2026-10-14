@@ -4,9 +4,9 @@
 
 ## 项目性质
 
-- FPGA 复习项目。方向：**通用数字设计 + 接口**（UART / SPI / I2C / AXI / DDR）。
-- 目标平台：Xilinx Artix-7 / Zynq。
-- 当前范围：Stage 0（验证闭环）+ Stage 1（时序基本功 + UART）。
+- FPGA 复健项目。方向：**5G 基带数据通路**（NCO → 混频 → FIR → 插值/抽取 → DUC/DDC）。
+- 目标平台：Xilinx Artix-7（正点原子达芬奇 Pro，XC7A100T）。
+- 当前范围：**Stage 1 — NCO**。完整规划见 `docs/路线图.md`。
 - **本机是 macOS arm64，无法运行 Vivado。** 综合/实现/上板在另一台 Windows 机器上做。
 - 用户背景：大学学过 FPGA，做过通信基带信号处理项目，多年未用，现在重拾。
 - **用户的目标是重新学会，不是拿到能跑的代码。** 多解释"为什么"。

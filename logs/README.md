@@ -9,7 +9,7 @@
 | 时序报告 | `*_timing_summary.rpt` | WNS / TNS / 违例路径 |
 | 时序详情 | `*_timing.rpt` | 关键路径明细 |
 | 资源报告 | `*_utilization.rpt` | LUT / FF / BRAM / DSP 用量 |
-| CDC 报告 | `report_cdc` 输出 | 跨时钟域检查（Stage 3 起很重要） |
+| CDC 报告 | `report_cdc` 输出 | 跨时钟域检查（多速率处理开始变重要） |
 
 ## 规矩
 
@@ -27,6 +27,6 @@ logs/
 │   ├── synth.log
 │   ├── timing_summary.rpt
 │   └── utilization.rpt
-└── s01_uart/
+└── s01_nco/
     └── ...
 ```
