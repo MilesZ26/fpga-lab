@@ -17,13 +17,20 @@ LED 只是用来证明"时钟 → 复位 → 约束 → 仿真 → 综合 → �
 
 ## 验收标准
 
-- [ ] `make setup` 成功（装好 iverilog）
-- [ ] `make sim` 全部通过
-- [ ] `build/tb_blinky.vcd` 生成，波形里能看到 led 周期翻转
-- [ ] `make lint` 无警告
-- [ ] （需要 Windows）Vivado 综合通过
-- [ ] （需要 Windows）XDC 引脚填对，板子上 LED 真的在闪
-- [ ] `docs/进度.md` 更新
+> ✅ **2026-10-14：Stage 0 已达成。** 整条闭环（仿真 + 上板）都跑通了，
+> 详见 [../docs/进度.md](../docs/进度.md)。下面逐条留痕。
+
+- [x] `make setup` 成功（装好 iverilog）
+- [x] `make sim` 全部通过（4 个检查点）
+- [x] `build/tb_blinky.vcd` 生成，波形里能看到 led 周期翻转
+- [x] `make lint` 无警告
+- [x] （需要 Windows）Vivado 2020.2 综合通过
+- [x] （需要 Windows）XDC 引脚填对（clk=R4 / rst_n=U7 / led=V9，50 MHz），
+      **板子上 LED 真的在闪** —— 另外还跑通了「按键控制 LED」工程
+- [x] `docs/进度.md` 更新
+
+> ℹ️ 还差一件小事（非阻塞）：Vivado 的综合日志 / 时序报告 / 资源报告
+> 还没拷进 `logs/s00_blinky/`。命令见 [../docs/上板指南.md](../docs/上板指南.md) 第 6 步。
 
 ## 待你提供
 
