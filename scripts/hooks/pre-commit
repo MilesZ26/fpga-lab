@@ -1,0 +1,125 @@
+#!/bin/sh
+#=============================================================================
+# pre-commit — 提交前的守卫：拦住 Vivado 中间产物和大文件
+#-----------------------------------------------------------------------------
+# 为什么需要它：
+#   .gitignore 只对**尚未被跟踪**的文件有效。一个文件只要被 `git add`
+#   过一次（哪怕后来删了再建），.gitignore 就再也管不住它 —— git 会继续
+#   跟踪它。等到发现"仓库怎么 3 GB 了"，历史里已经洗不掉了。
+#
+#   所以真正的保证不是"记得别提交"，而是"提交动作在物理上做不成"。
+#   这个钩子在 `git commit` 真正写库之前跑，命中规则就直接失败。
+#
+# 安装：make hooks      （把本文件复制到 .git/hooks/pre-commit）
+# 手动跑：make check    （不提交，只看暂存区有没有问题）
+# 明确知道自己要干什么时绕过：git commit --no-verify
+#
+# 可调阈值（环境变量）：
+#   MAX_MB=5     单个文件上限（MB）
+#   MAX_FILES=60 一次提交允许的暂存文件数上限
+#=============================================================================
+
+set -u
+
+# 无论在哪个子目录被调用，都切到仓库根 —— 下面的相对路径依赖它。
+ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || {
+    echo "✗ 不在 git 仓库里" >&2
+    exit 1
+}
+cd "$ROOT" || exit 1
+
+MAX_MB=${MAX_MB:-5}
+MAX_FILES=${MAX_FILES:-60}
+
+# Vivado 中间产物 / 生成物：路径命中即拒绝。
+# 故意写成一份独立清单，不依赖 .gitignore —— 因为本钩子要抓的
+# 恰恰是"已经被跟踪、.gitignore 管不住"的那一类文件。
+VIVADO_RE='(\.runs/|\.cache/|\.hw/|\.sim/|\.Xil/|\.ip_user_files/|\.gen/|\.srcs/|\.board/|xsim\.dir/|\.dcp$|\.bit$|\.bin$|\.ltx$|\.wdb$|\.jou$|\.str$|\.xpr$|\.pb$|(^|/)vivado\.log$|(^|/)vivado\.jou$|webtalk)'
+
+# 已经入库、但属于"生成物"的路径豁免（本仓库目前没有；留着以后加）
+ALLOW_RE='^$'
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED" ]; then
+    exit 0
+fi
+
+banner() {
+    echo "" >&2
+    echo "════════════════════════════════════════════════════════" >&2
+    echo "✗ pre-commit 拒绝本次提交" >&2
+    echo "════════════════════════════════════════════════════════" >&2
+}
+
+FAIL=0
+
+# ── 规则 1：Vivado 中间产物 ──────────────────────────────────
+BAD_PATHS=$(printf '%s\n' "$STAGED" \
+    | grep -E "$VIVADO_RE" \
+    | grep -Ev "$ALLOW_RE" || true)
+
+if [ -n "$BAD_PATHS" ]; then
+    [ "$FAIL" -eq 0 ] && banner
+    FAIL=1
+    echo "" >&2
+    echo "【1】暂存区里有 Vivado 中间产物 / 生成物：" >&2
+    printf '%s\n' "$BAD_PATHS" | sed 's/^/      /' >&2
+    echo "" >&2
+    echo "      这些文件每次综合都在变，且体积从几十 MB 到几 GB。" >&2
+    echo "      正确做法：Vivado 工程建在**仓库目录之外**，" >&2
+    echo "      只把文本报告拷进 logs/ 再提交。" >&2
+fi
+
+# ── 规则 2：单文件过大 ───────────────────────────────────────
+LIMIT=$((MAX_MB * 1024 * 1024))
+
+BIG=$(printf '%s\n' "$STAGED" | while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    [ -f "$f" ] || continue
+    sz=$(wc -c < "$f" 2>/dev/null | tr -d ' ')
+    [ -n "$sz" ] || continue
+    if [ "$sz" -gt "$LIMIT" ]; then
+        printf '      %-50s %s MB\n' "$f" "$((sz / 1048576))"
+    fi
+done)
+
+if [ -n "$BIG" ]; then
+    [ "$FAIL" -eq 0 ] && banner
+    FAIL=1
+    echo "" >&2
+    echo "【2】暂存区里有超过 ${MAX_MB} MB 的文件：" >&2
+    printf '%s\n' "$BIG" >&2
+    echo "" >&2
+    echo "      GitHub 单文件硬上限 100 MB（超了直接拒绝推送），" >&2
+    echo "      > 50 MB 会警告。二进制产物请勿入库。" >&2
+fi
+
+# ── 规则 3：文件数突然爆炸 ───────────────────────────────────
+N=$(printf '%s\n' "$STAGED" | grep -c . || true)
+
+if [ "$N" -gt "$MAX_FILES" ]; then
+    [ "$FAIL" -eq 0 ] && banner
+    FAIL=1
+    echo "" >&2
+    echo "【3】这次暂存了 ${N} 个文件，超过阈值 ${MAX_FILES}。" >&2
+    echo "      一次改这么多文件很反常 —— 多半是 Vivado 在仓库里建了工程。" >&2
+    echo "      先运行 git status 看一眼；确认没问题再调高阈值：" >&2
+    echo "          MAX_FILES=$N git commit ..." >&2
+fi
+
+# ── 结论 ─────────────────────────────────────────────────────
+if [ "$FAIL" -ne 0 ]; then
+    echo "" >&2
+    echo "── 怎么处理 ────────────────────────────────────────────" >&2
+    echo "  撤销暂存（文件不动）：" >&2
+    echo "      git restore --staged <文件>" >&2
+    echo "  全部撤销暂存：" >&2
+    echo "      git restore --staged ." >&2
+    echo "  确认某个文件确实该提交（很少见）：" >&2
+    echo "      git commit --no-verify" >&2
+    echo "════════════════════════════════════════════════════════" >&2
+    exit 1
+fi
+
+exit 0

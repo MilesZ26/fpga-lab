@@ -11,6 +11,12 @@ tools/
 # ── Vivado 工程与中间产物 ────────────────────
 # 只提交源码 / 约束 / 脚本 / 报告。Vivado 的中间文件动辄数 GB，
 # 而且每次综合都在变，绝对不能入库，也绝对不要用网盘同步。
+#
+# ⚠️ .gitignore 只能挡住"还没被跟踪"的文件。
+#    一个文件只要被 git add 过一次，之后 .gitignore 就再也管不住它。
+#    所以这里只是第二道防线，真正的保证是：
+#      (1) 工程建在仓库目录之外（物理隔离，最根本）
+#      (2) pre-commit 钩子（make hooks）在提交前拦住
 .Xil/
 *.Xil/
 xsim.dir/
@@ -26,5 +32,30 @@ xsim.dir/
 *.jou
 *.str
 
+# 工程文件本身（用 Tcl 脚本重建即可，不必入库）
+*.xpr
+*.xpr.bak
+
+# 比特流与下载相关产物
+*.bit
+*.bin
+*.ltx
+*.msk
+*.prm
+
+# 波形数据库与仿真中间文件
+*.wdb
+*.vcd.gz
+*.pb
+webtalk*.jou
+webtalk*.log
+usage_statistics_webtalk.*
+
+# Vivado 在工程根目录生成的会话日志（注意：不要忽略 *.log，
+# logs/ 目录里要提交的同步日志/综合日志正是 .log）
+vivado.log
+vivado_*.backup.log
+
 # ── 系统文件 ──────────────────────────────────
 .DS_Store
+Thumbs.db

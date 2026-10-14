@@ -18,7 +18,11 @@ help:
 	@echo "                        例：make wave VCD=build/tb_blinky.vcd"
 	@echo "  make clean            删除 build/"
 	@echo ""
+	@echo "  make hooks            安装 pre-commit 守卫（拦住 Vivado 中间产物）"
+	@echo "  make check            只检查暂存区，不提交"
+	@echo ""
 	@echo "注意：Vivado 的综合/实现/上板在 Windows 机器上做，本仓库不跑 Vivado。"
+	@echo "      新克隆仓库后建议先跑一次： make hooks"
 
 setup:
 	@sh scripts/setup_tools.sh
@@ -57,4 +61,18 @@ clean:
 	@rm -rf build
 	@echo "已删除 build/"
 
-.PHONY: help setup sim lint list wave clean
+# ── git 守卫 ─────────────────────────────────────────────────────────
+# 新克隆下来的仓库没有钩子（.git/hooks 不进版本库），所以要装一次。
+hooks:
+	@if [ ! -d .git/hooks ]; then \
+		echo "✗ 找不到 .git/hooks —— 这里不是 git 仓库根目录"; exit 1; \
+	fi
+	@cp scripts/hooks/pre-commit .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
+	@echo "✓ pre-commit 守卫已安装：.git/hooks/pre-commit"
+	@echo "  以后 git commit 会在写库前自动拦截 Vivado 中间产物和大文件。"
+
+check:
+	@sh scripts/hooks/pre-commit && echo "✓ 暂存区没问题"
+
+.PHONY: help setup sim lint list wave clean hooks check
