@@ -1,3 +1,4 @@
+`timescale 1ns/1ps
 module nco #(
     parameter integer CLK_HZ   = 50_000_000,   // 输入时钟频率
     parameter integer FREQ_HZ  = 1,              // 输出频率
