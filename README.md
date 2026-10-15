@@ -8,9 +8,7 @@ NCO → 复数混频 → FIR → 插值/抽取 → DUC / DDC
 
 - 完整规划 → [docs/路线图.md](docs/路线图.md)
 - 当前状态 → [docs/进度.md](docs/进度.md) ← **每次开工先读这个**
-- 工具链情况 → [docs/环境.md](docs/环境.md)
-- 两台机器怎么同步 → [docs/同步指南.md](docs/同步指南.md)
-- **怎么上板（Vivado 全流程） → [docs/上板指南.md](docs/上板指南.md)**
+- 怎么上板（Vivado 全流程） → [docs/上板指南.md](docs/上板指南.md)
 
 ---
 
@@ -42,43 +40,8 @@ make list               # 列出所有 testbench
 make wave VCD=build/tb_blinky.vcd        # 用 Surfer 看波形
 ```
 
----
-
-## 这个仓库怎么用（两台机器）
-
-**这台 Mac 是主战场**：写 RTL、跑仿真，秒级迭代。
-**Windows 机器负责综合/上板，也能改文档**（装了 DSH + Git for Windows）。
-
-```
-Mac（写代码 + 跑仿真）                    Windows（Vivado 上板 + 文档）
-────────────────────                      ──────────────────────────
-改 RTL → iverilog 仿真（1~5 秒）
-git commit && push  ───────────────────→  git pull → 综合/实现/上板
-                    ←─────────────────  日志/report 放进 logs/ 再 push
-git pull → 读日志分析
-```
-
-> ✅ **上板这条路 2026-10-14 已经走通**（Vivado 2020.2，板子上 LED 真的在闪）。
-> 后面每个 stage 直接复用 [上板指南](docs/上板指南.md)，不用再摸索工具链。
-
-### ⚠️ 只用 git 传文件，不要用网盘
-
-网盘的问题：没有历史、没有 diff、冲突时静默覆盖、会锁正在写的文件。
-而且 `*.runs/`、`*.cache/`、`.Xil/` 这些 Vivado 中间产物动辄几 GB
-且每次综合都在变，同步它们是一场灾难。
-
-**只传这些：** `rtl/` `tb/` `constr/` `scripts/` `docs/` `logs/`
-
-### Windows 侧的约定
-
-1. `git pull`
-2. 在 Vivado 里打开工程（或新建），综合/实现/上板
-3. 把 **综合日志、实现日志、时序报告、资源报告** 拷进 `logs/`
-4. `git add logs && git commit && git push`
-
-Mac 这边我 `git pull` 之后用 grep 读日志 —— 不要往聊天里粘贴几万行的报告。
-
-详细的 git 操作见 [docs/同步指南.md](docs/同步指南.md)。
+> iverilog 和 bison 由 `make setup` **源码编译**进 `tools/`（不进仓库，
+> `.gitignore` 里有）。macOS 自带的 bison 2.3 太老，必须换。
 
 ---
 
@@ -86,14 +49,12 @@ Mac 这边我 `git pull` 之后用 grep 读日志 —— 不要往聊天里粘�
 
 ```
 fpga-lab/
-├── AGENTS.md              ← 编码规范与协作铁律（AI 每次自动读取）
+├── AGENTS.md              ← 编码规范与铁律（AI 每次自动读取）
 ├── Makefile               ← 统一入口
 ├── docs/
 │   ├── 进度.md            ← 状态文件，每次开工先读、收工更新
 │   ├── 路线图.md          ← 阶段规划与验收标准
-│   ├── 环境.md            ← 工具链现状与安装说明
-│   ├── 上板指南.md        ← Windows/Vivado 从零上板全流程
-│   └── 同步指南.md        ← Mac ↔ Windows 的 git 同步
+│   └── 上板指南.md        ← Vivado 从零上板全流程（引脚 / 器件 / 排障）
 ├── scripts/
 │   ├── sim.sh             ← 一键仿真（自动发现所有 tb_*.v）
 │   ├── lint.sh            ← 静态检查
@@ -110,7 +71,7 @@ fpga-lab/
 │   └── tb_sync_2ff.v
 ├── s00_blinky/            ← Stage 0：点亮 LED + 验证闭环
 ├── s01_nco/               ← Stage 1：NCO（相位累加器 + 查表）
-├── logs/                  ← Windows 侧拿回来的 Vivado 日志与报告
+├── logs/                  ← 板级综合 / 实现日志与报告
 └── ref/                   ← Python 参考模型、脚本
 ```
 

@@ -83,5 +83,8 @@ set_property -dict {PACKAGE_PIN V9  IOSTANDARD LVCMOS33} [get_ports led]
 ##        2026-10-14 由**上板结果反证**：封装选错则引脚对不上、灯不会亮，
 ##        而灯确实按 1 Hz 闪了，所以这个器件就是对的。换机器建工程时照抄。
 ## [x] 下载后 LED 以约 1 Hz 闪烁 —— 2026-10-14 实测通过
-## [ ] 综合后无 CRITICAL WARNING —— 待从 logs/s00_blinky/ 的日志确认
+## [x] 综合后无 CRITICAL WARNING —— 2026-10-15 确认（0 条）
+##     出处：logs/s00_blinky/synth_runme.log（实现日志同样 0 条）
+## [x] 实现后时序收敛 —— **WNS = +16.830 ns**（周期 20 ns），0 个失败端点
+##     出处：logs/s00_blinky/blinky_timing_summary_routed.rpt
 ##=============================================================================
