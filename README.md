@@ -47,7 +47,7 @@ make wave VCD=build/tb_blinky.vcd        # 用 Surfer 看波形
 ## 这个仓库怎么用（两台机器）
 
 **这台 Mac 是主战场**：写 RTL、跑仿真，秒级迭代。
-**Windows 机器负责综合/上板，也能改文档**（装了 DSH + GitHub Desktop）。
+**Windows 机器负责综合/上板，也能改文档**（装了 DSH + Git for Windows）。
 
 ```
 Mac（写代码 + 跑仿真）                    Windows（Vivado 上板 + 文档）
