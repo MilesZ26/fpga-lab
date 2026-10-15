@@ -36,6 +36,8 @@ module tb_nco;
     localparam integer CLK_HZ  = 1024;
     localparam integer FREQ_HZ = 16;
     localparam integer PHASE_W = 16;
+    localparam integer LUT_AW  = 12;      // 必须和 nco 的默认值、以及 lut/*.mem 一致
+    localparam integer AW      = 12;
     localparam integer FTW     = (FREQ_HZ * (64'd1 << PHASE_W)) / CLK_HZ;     // 1024
     localparam integer PERIOD  = (1 << PHASE_W) / FTW;                        // 64 拍
 
@@ -49,23 +51,26 @@ module tb_nco;
     localparam integer PHASE_C = 24;
     localparam integer FTW_C   = (FREQ_HZ * (64'd1 << PHASE_C)) / CLK_HZ;     // 262144
 
-    localparam integer ADDR_SH = PHASE_W - 12;      // 地址取相位高 12 位
-    localparam integer DEPTH   = 1 << 12;
-    localparam integer AMP     = 2047;              // 表满幅（生成器约定）
+    localparam integer ADDR_SH = PHASE_W - LUT_AW;  // 地址取相位高 LUT_AW 位
+    localparam integer DEPTH   = 1 << LUT_AW;
+    localparam integer AMP     = (1 << (AW-1)) - 1; // 表满幅（生成器约定）
 
     reg  clk   = 1'b0;
     reg  rst_n = 1'b0;
-    wire [11:0] sin_a, cos_a;
-    wire [11:0] sin_b, cos_b;
-    wire [11:0] sin_c, cos_c;
+    wire signed [AW-1:0] sin_a, cos_a;
+    wire signed [AW-1:0] sin_b, cos_b;
+    wire signed [AW-1:0] sin_c, cos_c;
 
     always #(`CLK_PERIOD/2) clk = ~clk;
 
-    nco #(.CLK_HZ(CLK_HZ), .FREQ_HZ(FREQ_HZ), .PHASE_W(PHASE_W)) dut_a (
+    nco #(.CLK_HZ(CLK_HZ), .FREQ_HZ(FREQ_HZ), .PHASE_W(PHASE_W),
+          .LUT_AW(LUT_AW), .AW(AW)) dut_a (
         .clk(clk), .rst_n(rst_n), .fsin_o(sin_a), .fcos_o(cos_a));
-    nco #(.CLK_HZ(CLK_B),  .FREQ_HZ(FREQ_B),  .PHASE_W(PHASE_B)) dut_b (
+    nco #(.CLK_HZ(CLK_B),  .FREQ_HZ(FREQ_B),  .PHASE_W(PHASE_B),
+          .LUT_AW(LUT_AW), .AW(AW)) dut_b (
         .clk(clk), .rst_n(rst_n), .fsin_o(sin_b), .fcos_o(cos_b));
-    nco #(.CLK_HZ(CLK_HZ), .FREQ_HZ(FREQ_HZ), .PHASE_W(PHASE_C)) dut_c (
+    nco #(.CLK_HZ(CLK_HZ), .FREQ_HZ(FREQ_HZ), .PHASE_W(PHASE_C),
+          .LUT_AW(LUT_AW), .AW(AW)) dut_c (
         .clk(clk), .rst_n(rst_n), .fsin_o(sin_c), .fcos_o(cos_c));
 
 `ifdef DUMP_VCD
@@ -81,14 +86,14 @@ module tb_nco;
 
     // ── 参考表：TB 自己把同一份 .mem 读进来做 golden model ──────
     // 表本身的正确性由 tb_lut.v 负责；这里用它来验"地址 + 延迟 + 查表"。
-    reg signed [11:0] exp_sin [0:DEPTH-1];
-    reg signed [11:0] exp_cos [0:DEPTH-1];
+    reg signed [AW-1:0] exp_sin [0:DEPTH-1];
+    reg signed [AW-1:0] exp_cos [0:DEPTH-1];
 
     integer n, i, j, found, found2;
     integer seq_err, amp, amp_min, amp_max, amp_dev;
     integer events, span, started;
     integer peak_a1, peak_c;
-    reg signed [11:0] prev_b;
+    reg signed [AW-1:0] prev_b;
     real    f_theory_b, f_meas_b, f_err_ppm;
 
     // 采一拍：posedge 之后 #1，等非阻塞赋值落定
@@ -132,7 +137,7 @@ module tb_nco;
                                  n, j, exp_sin[j], exp_cos[j], sin_a, cos_a);
                 end
             end
-            if (n == 16 && sin_a !== 12'sd2047)
+            if (n == 16 && sin_a !== AMP)
                 $display("    [参考] n=16 本应是幅值顶点 +2047，实测 %0d", sin_a);
             amp = $signed(sin_a) * $signed(sin_a) + $signed(cos_a) * $signed(cos_a);
             if (amp < amp_min) amp_min = amp;
@@ -154,7 +159,7 @@ module tb_nco;
         // ══ 4. 周期：黑盒测两个相邻峰值的间隔 ═════════════════
         found = 0;
         for (i = 0; i < 2 * PERIOD && !found; i = i + 1) begin
-            if (sin_a == 12'sd2047) found = 1;
+            if (sin_a == AMP) found = 1;
             else tick;
         end
         `check(found, "能在有限拍内等到 sin 峰值（说明输出在动）");
@@ -164,7 +169,7 @@ module tb_nco;
         for (i = 0; i < 2 * PERIOD && !found2; i = i + 1) begin
             tick;
             j = j + 1;
-            if (sin_a == 12'sd2047) found2 = 1;
+            if (sin_a == AMP) found2 = 1;
         end
         peak_a1 = j;
         `check_eq("两个相邻 sin 峰值间隔 = 2^PHASE_W / FTW = 64 拍", peak_a1, PERIOD);
@@ -174,7 +179,7 @@ module tb_nco;
         for (i = 0; i < 2 * PERIOD && !found2; i = i + 1) begin
             tick;
             j = j + 1;
-            if (sin_a == 12'sd2047) found2 = 1;
+            if (sin_a == AMP) found2 = 1;
         end
         `check_eq("再测一个周期，间隔同样是 64 拍（周期性）", j, PERIOD);
 
@@ -239,7 +244,7 @@ module tb_nco;
         `check_eq("DUT C 的 FTW = 16 * 2^24 / 1024 = 262144", dut_c.PHI_INC, FTW_C);
         found = 0;
         for (i = 0; i < 2 * PERIOD && !found; i = i + 1) begin
-            if (sin_c == 12'sd2047) found = 1;
+            if (sin_c == AMP) found = 1;
             else tick;
         end
         j = 0;
@@ -247,7 +252,7 @@ module tb_nco;
         for (i = 0; i < 2 * PERIOD && !found2; i = i + 1) begin
             tick;
             j = j + 1;
-            if (sin_c == 12'sd2047) found2 = 1;
+            if (sin_c == AMP) found2 = 1;
         end
         peak_c = j;
         `check_eq("DUT C（PHASE_W=24）周期仍是 64 拍：换位宽不改频率", peak_c, PERIOD);

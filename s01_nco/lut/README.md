@@ -75,9 +75,49 @@ initial $readmemh({`LUTDIR, "sin.mem"}, sin_rom);
 动手改 `.mem` 之前先想清楚：这两个文件是生成物，要改就改生成器再 `make lut`。
 
 
-- **Vivado 侧**：综合时同样按"相对 run 目录"找文件。最保险是让脚本/工程把
-  `s01_nco/lut/` 加到源文件里，或在 Vivado 的 verilog define 里显式给绝对路径。
-  这条**还没在 Vivado 上实测过**，等第一次综合时验证，别当成已知结论。
+### ✅ Vivado 侧：**已实测（2026-10-15）**，结论和仿真侧一样
+
+综合也是按"**相对 run 目录**"找文件（`<工程>.runs/synth_1/`，由 `runme.bat` 里的
+`cd /d "%HD_SDIR%"` 设定），所以 RTL 里那个兜底相对路径**同样读不到**：
+
+```
+CRITICAL WARNING: [Synth 8-4445] could not open $readmem data file
+  's01_nco/lut/sin.mem'; please make sure the file is added to project and
+  has read permission, ignoring   [nco.v:23]
+```
+
+**两个实测结论，都是踩过才敢写的：**
+
+| 做法 | 结果 |
+|---|---|
+| **把 `.mem` 加进工程 source** | ❌ **没用**。Vivado 报错里那句 "please make sure the file is added to project" 是**误导**——加进去了它也不会去搜 |
+| **`-verilog_define LUTDIR="<绝对路径>/"`** | ✅ **正确解法** |
+| 把 `.mem` 拷到 run 目录下的 `s01_nco/lut/` | ⚠️ 能跑通，但只适合做诊断（会造成仿真/综合各用一份独立数据，别长期用） |
+
+工程模式下的填法：**Settings → Synthesis → Options → More Options**：
+
+```
+-verilog_define LUTDIR="D:/Backup/Documents/GitHub/fpga-lab/s01_nco/lut/"
+```
+
+⚠️ 两个容易翻车的点：
+
+1. **值里必须带真正的双引号**，**结尾的 `/` 不能少**
+   （RTL 里是 ``$readmemh({`LUTDIR, "sin.mem"}, ...)`` 拼起来的）。
+2. **宏名一个字都不能错。** s01 上板时把它写成了 `LUDIR`（少一个 `T`），
+   于是 `` `ifndef LUTDIR `` 判定"没定义"→ 走兜底路径 → 表全 x →
+   **整个 NCO 被综合优化掉**，板上四颗灯全灭。
+   **识别特征**：报错信息里显示的是**兜底相对路径**而不是你填的绝对路径 ——
+   看到这个就说明宏压根没生效。
+
+**怎么确认表真的进去了**（比翻日志快）：综合后看 `report_utilization`。
+
+| 指标 | 表**没**读进去 | 表读进去了 |
+|---|---|---|
+| `Block RAM Tile` | **0** | **3**（两张 4096×12 的表） |
+| `Slice Registers` | **2**（只剩 `reset_sync` 的两个触发器） | **35** |
+
+> 来龙去脉见 [docs/学习备忘.md](../../docs/学习备忘.md) 第 1、2、3 节。
 
 ## 为什么 `.mem` 要入库（而不是像 `build/` 那样忽略）
 
@@ -89,4 +129,7 @@ initial $readmemh({`LUTDIR, "sin.mem"}, sin_rom);
 
 - `AW` 必须是 4 的倍数（十六进制字符数 = `AW/4`）。
 - `LUT_AW` 变浅 → 相位截断变狠 → 输出杂散变大。第一版建议保持 `LUT_AW = PHASE_W`。
-- 换参数后：`make lut` → 改 `tb_lut.v` 里的 `LUT_AW`/`AW` → `make sim` 必须仍然全绿。
+- 换参数后：`make lut` → 改 `tb_lut.v` 和 `tb_nco.v` 里的 `LUT_AW`/`AW` →
+  `make sim` 必须仍然全绿。
+  （`nco.v` / `nco_top.v` 的 `LUT_AW` / `AW` 已经是**参数**，不用改 RTL；
+  但**必须重新生成 `.mem`**——`$readmemh` 读不满时不报错，表里会留 x。）

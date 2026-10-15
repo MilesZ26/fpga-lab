@@ -38,8 +38,10 @@
 
 module nco_top #(
     parameter integer CLK_HZ  = 50_000_000,   // 输入时钟频率（板子上是 50 MHz）
-    parameter integer FREQ_HZ = 1,            // 期望输出频率
-    parameter integer PHASE_W = 32            // 相位累加器位宽
+    parameter integer FREQ_HZ = 100_000,      // 期望输出频率（ILA 用；看 LED 心跳时改回 1）
+    parameter integer PHASE_W = 32,           // 相位累加器位宽
+    parameter integer LUT_AW  = 12,           // 查表地址位宽（表深 = 2**LUT_AW）
+    parameter integer AW      = 12            // 输出幅度位宽（必须和 lut/*.mem 一致）
 )(
     input  wire       clk,     // 板级时钟 R4
     input  wire       rst_n,   // 板级按键，低有效（异步）
@@ -58,13 +60,20 @@ module nco_top #(
     );
 
     // ── NCO ──
-    (* mark_debug = "true" *) wire [11:0] fsin_o;
-    (* mark_debug = "true" *) wire [11:0] fcos_o;
+    // keep = "true" 和 mark_debug 缺一不可：
+    //   mark_debug 只是给 Vivado 的 "Set up Debug" 看的标记；
+    //   keep 才是明确禁止综合优化掉这个网。
+    // 上一轮只写了 mark_debug，结果 fcos_o 和 fsin_o[7:0] 这些没接到引脚的位
+    // 被优化掉了，Set up Debug 的候选列表里根本找不到它们。
+    (* mark_debug = "true", keep = "true" *) wire signed [AW-1:0] fsin_o;
+    (* mark_debug = "true", keep = "true" *) wire signed [AW-1:0] fcos_o;
 
     nco #(
         .CLK_HZ (CLK_HZ),
         .FREQ_HZ(FREQ_HZ),
-        .PHASE_W(PHASE_W)
+        .PHASE_W(PHASE_W),
+        .LUT_AW (LUT_AW),
+        .AW     (AW)
     ) u_nco (
         .clk   (clk),
         .rst_n (rst_n_sync),
@@ -73,7 +82,8 @@ module nco_top #(
     );
 
     // ── LED ──
-    assign led[0]   = fsin_o[11];    // 符号位：半周期翻转
-    assign led[3:1] = fsin_o[10:8];  // 幅值高 3 位：二进制斜坡
+    // 位宽都跟着 AW 走，换幅度位宽时这里不用改。
+    assign led[0]   = fsin_o[AW-1];        // 符号位：半周期翻转
+    assign led[3:1] = fsin_o[AW-2 -: 3];   // 幅值高 3 位：二进制斜坡
 
 endmodule

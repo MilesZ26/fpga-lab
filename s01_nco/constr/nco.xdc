@@ -111,3 +111,47 @@ set_property -dict {PACKAGE_PIN W7  IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ## [ ] 下载后 led[0]（V9）以约 1 Hz 闪 —— 这一颗灯的引脚是上板反证过的
 ## [ ] 想用 ILA：FREQ_HZ 改成 100_000，Set up Debug 勾 fsin_o / fcos_o
 ##=============================================================================
+
+
+##=============================================================================
+## ⚠️ 以下是 Vivado 的 "Set up Debug" 自动追加的 ILA 调试配置
+##-----------------------------------------------------------------------------
+## 这段**不是手写的**，是 Vivado 在你点完 Set up Debug 之后自己写进这个文件的
+## （因为工程是"按路径引用"这个 XDC，不是拷贝一份 —— 见 docs/上板指南.md 第 1 步）。
+##
+## 留着的好处：Reset Synthesis 之后 ILA 会自动重建，不用再走一遍 Set up Debug。
+##
+## 什么时候删：这个 stage 的 ILA 调试结束、准备提交代码之前。
+## 它是调试脚手架不是设计的一部分，而且里面**写死了网名**
+## （clk_IBUF_BUFG / fcos_o[*] / fsin_o[*]），设计一改就可能对不上。
+##
+## 另一个可能的坑：dbg_hub 的 C_CLK_INPUT_FREQ_HZ 写的是 300000000（300 MHz），
+## 而我们的时钟是 50 MHz。如果 ILA 出现"连不上 / 抓不到 / 超时"，
+## 先把这个值改成 50000000 再试。
+##
+## 如果 Vivado 重新综合时报 debug core 重复定义，把这一段整个删掉，
+## 然后重新走一遍 Set up Debug 即可。
+##=============================================================================
+
+create_debug_core u_ila_0 ila
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_DATA_DEPTH 8192 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property port_width 1 [get_debug_ports u_ila_0/clk]
+connect_debug_port u_ila_0/clk [get_nets [list clk_IBUF_BUFG]]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+set_property port_width 12 [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {fcos_o[0]} {fcos_o[1]} {fcos_o[2]} {fcos_o[3]} {fcos_o[4]} {fcos_o[5]} {fcos_o[6]} {fcos_o[7]} {fcos_o[8]} {fcos_o[9]} {fcos_o[10]} {fcos_o[11]}]]
+create_debug_port u_ila_0 probe
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe1]
+set_property port_width 12 [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {fsin_o[0]} {fsin_o[1]} {fsin_o[2]} {fsin_o[3]} {fsin_o[4]} {fsin_o[5]} {fsin_o[6]} {fsin_o[7]} {fsin_o[8]} {fsin_o[9]} {fsin_o[10]} {fsin_o[11]}]]
+set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
+set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
+set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
+connect_debug_port dbg_hub/clk [get_nets clk_IBUF_BUFG]
