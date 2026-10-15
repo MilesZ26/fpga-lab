@@ -89,6 +89,16 @@ def write_files(files, out_dir):
         print("  写入 %s（%d 行）" % (path, text.count("\n")))
 
 
+def data_lines(text):
+    """把文本取成"数据行"列表：忽略 CR、空行、行尾有无换行。
+
+    只用来做 --check 的比较：换行符属于排版，不影响 $readmemh 读到的数值，
+    而两台机器的编辑器（Windows 常把文件末尾换行吃掉、或写成 CRLF）会改它。
+    数值被改动一定会在这里现形。
+    """
+    return [line.strip() for line in text.replace("\r\n", "\n").split("\n") if line.strip()]
+
+
 def check_files(files, out_dir):
     bad = 0
     for name, text in sorted(files.items()):
@@ -98,9 +108,13 @@ def check_files(files, out_dir):
             bad += 1
             continue
         with open(path, "r") as fh:
-            got = fh.read().replace("\r\n", "\n")
+            got = fh.read()
         if got == text:
             print("  [PASS] %s 与生成器一致" % path)
+        elif data_lines(got) == data_lines(text):
+            # Windows 编辑器经常把文件末尾那个换行吃掉（或改成 CRLF）。
+            # 这不影响 $readmemh 读到的数值，不该算"数据被改过"。
+            print("  [PASS] %s 数据一致（行尾换行/CRLF 与生成器不同，不影响读表）" % path)
         else:
             print("  [FAIL] %s 与生成器不一致（文件被改过？需重新生成）" % path)
             bad += 1
