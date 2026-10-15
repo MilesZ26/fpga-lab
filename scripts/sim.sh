@@ -79,7 +79,15 @@ for TB in $TBS; do
         DUTDIR="$ROOT/rtl/common"
     fi
 
+    # 顶层模块（nco_top / blinky_top 这种）会实例化 rtl/common 里的模块
+    # （reset_sync / edge_detect / sync_2ff），所以除了本 stage 的 rtl/，
+    # 还要把 rtl/common 一起编进去。DUTDIR 本身就是 common 时跳过，
+    # 否则同一个文件会被列两次，iverilog 会报模块重复定义。
+    COMMONDIR="$ROOT/rtl/common"
     SRCS=$(find "$DUTDIR" -name '*.v' | sort | tr '\n' ' ')
+    if [ "$DUTDIR" != "$COMMONDIR" ]; then
+        SRCS="$SRCS$(find "$COMMONDIR" -name '*.v' | sort | tr '\n' ' ')"
+    fi
 
     # 查表数据目录（sNN_xxx/lut/）。$readmemh 的路径是相对**仿真进程的工作目录**，
     # 而 vvp 是在 build/ 里跑的 —— RTL 里写 "s01_nco/lut/sin.mem" 这种相对路径
