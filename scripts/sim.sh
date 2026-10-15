@@ -81,13 +81,26 @@ for TB in $TBS; do
 
     SRCS=$(find "$DUTDIR" -name '*.v' | sort | tr '\n' ' ')
 
+    # 查表数据目录（sNN_xxx/lut/）。$readmemh 的路径是相对**仿真进程的工作目录**，
+    # 而 vvp 是在 build/ 里跑的 —— RTL 里写 "s01_nco/lut/sin.mem" 这种相对路径
+    # 一定找不到。所以这里把绝对路径以宏 LUTDIR 传进去，RTL 侧写：
+    #     `ifndef LUTDIR
+    #       `define LUTDIR "s01_nco/lut/"    // 综合/手工跑时的兜底
+    #     `endif
+    #     $readmemh({`LUTDIR, "sin.mem"}, rom);
+    # 注意 -D 的值需要带**真正的双引号**，所以下面用 \"；路径含空格会散架（本仓库不会）。
+    LUTDEF=""
+    if [ -d "$ROOT/$STAGE/lut" ]; then
+        LUTDEF="-DLUTDIR=\"$ROOT/$STAGE/lut/\""
+    fi
+
     echo "──────────────────────────────────────────────"
     echo "▶ $TB"
 
     # shellcheck disable=SC2086
     "$SIM" -g2005 -Wall -s "$NAME" \
         -I "$TBDIR" -I "$ROOT/tb" -I "$ROOT/rtl/common" -I "$DUTDIR" \
-        -DDUMP_VCD -o "$VVP" $SRCS "$TBPATH" > "$CLOG" 2>&1
+        $LUTDEF -DDUMP_VCD -o "$VVP" $SRCS "$TBPATH" > "$CLOG" 2>&1
     RC=$?
 
     if [ "$RC" -ne 0 ]; then
@@ -119,7 +132,7 @@ done
 echo ""
 echo "══════════════════════════════════════════════"
 if [ "$FAILED" -eq 0 ]; then
-    # 注意 ${TOTAL} 必须带花括号：见 docs/进度.md「已知坑 4」
+    # 注意 ${TOTAL} 必须带花括号：见 docs/进度.md「已知坑 5」
     echo "结果：全部通过（${TOTAL}/${TOTAL}）"
     exit 0
 else

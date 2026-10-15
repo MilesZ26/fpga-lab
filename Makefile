@@ -16,6 +16,8 @@ help:
 	@echo "  make list             列出所有 testbench"
 	@echo "  make wave             列出已有波形 / 打开指定波形"
 	@echo "                        例：make wave VCD=build/tb_blinky.vcd"
+	@echo "  make lut              重新生成 NCO 查表数据（s01_nco/lut/*.mem）"
+	@echo "  make lut-check        只校验表文件与生成器一致，不写文件"
 	@echo "  make clean            删除 build/"
 	@echo ""
 	@echo "  make hooks            安装 pre-commit 守卫（拦住 Vivado 中间产物）"
@@ -57,6 +59,17 @@ wave:
 		exit 1; \
 	fi
 
+# ── NCO 查表数据 ─────────────────────────────────────────────
+# 表的"真值"由 scripts/gen_lut.py 离线生成（Vivado 综合不了 $sin，必须是常量）。
+# .mem 文件本身入库（仿真和综合要用同一份数据），这个目标只负责重新生成。
+PYTHON ?= python3
+
+lut:
+	@$(PYTHON) scripts/gen_lut.py --out s01_nco/lut
+
+lut-check:
+	@$(PYTHON) scripts/gen_lut.py --check s01_nco/lut
+
 clean:
 	@rm -rf build
 	@echo "已删除 build/"
@@ -75,4 +88,4 @@ hooks:
 check:
 	@sh scripts/hooks/pre-commit && echo "✓ 暂存区没问题"
 
-.PHONY: help setup sim lint list wave clean hooks check
+.PHONY: help setup sim lint list wave lut lut-check clean hooks check
