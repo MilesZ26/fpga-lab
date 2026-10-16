@@ -47,8 +47,8 @@
 
 | 远端 | 谁推 | 说明 |
 |---|---|---|
-| `origin`（Gitee） | **Mac 和 Windows 都推** | Windows 那台机器只认它 |
-| `github` | **只有 Mac 推** | Windows 不碰 |
+| `origin`（Gitee） | **Mac 和 Windows 都推** | Windows 那台机器**只认它** |
+| `github` | **只有 Mac 推** | **Windows 连这个远端都不要配** —— 不配就不会手滑 pull/push 错 |
 
 1. **动手前先 `git pull --rebase origin main`；收工后推两个远端。**
 2. **推的顺序：先 Gitee，后 GitHub。** Gitee 是 Windows 的关键路径；
@@ -59,6 +59,37 @@
    Mac 侧改「当前阶段 / 下一步 / 待决问题」**，把冲突面压小。
 5. 板级证据（`constr/*.xdc` 里的 ILA 配置、`logs/` 里的综合实现报告）
    **本来就该进 GitHub**，不要嫌它"是 Windows 产生的"而想办法甩掉。
+6. **两台机器都要开 `pull.rebase`**（见下），否则两台机器并发提交时
+   `git pull` 的默认行为就是"分叉 + merge"。
+
+### 为什么必须 rebase：分叉不需要谁做错事
+
+**两台机器从同一个基点各自提交，就必然分叉。** 哪怕两边都规规矩矩
+`pull → 改 → commit → push`，只要在同一个时间段里都提交过，后 push 的那台
+就会遇到 non-fast-forward。这时 git 只给两个选择：
+
+| pull 的方式 | 结果 | 代价 |
+|---|---|---|
+| `git pull --rebase` | 自己的提交被重放到远端最新之上 → **线性** | 自己的提交哈希会变（单人用，无所谓） |
+| `git pull`（默认） | 生成 merge 提交 → **图上分叉** | 见下 |
+
+本仓库**真的发生过一次**：`45eccaa`（2026-10-15，Stage 0 收尾），
+一边 2 个提交（logs）、一边 3 个提交（docs），分叉了 5 个提交才被 merge 掉。
+
+分叉的真实代价不是图难看，而是**那几天两台机器手上的代码不是同一份** ——
+你可能拿着一份不含最新 RTL 改动的代码去综合，然后对着"明明改了却没生效"查半天。
+
+### Windows 那台机器要做的一次性设置
+
+```powershell
+git remote -v                        # 先确认 origin 指向 gitee
+git remote remove github             # 之前加过 github 就删掉（只删本地引用，不动远端仓库）
+git config pull.rebase true          # pull 默认走 rebase，不再产生 merge 提交
+git config rebase.autoStash true     # 有未提交改动时自动 stash，rebase 完再放回
+```
+
+> `git config` 存在 `.git/config` 里，**不进版本库**，所以两台机器各设一次。
+> 换机器/重新 clone 之后要重设。
 
 ## 编码规范
 
