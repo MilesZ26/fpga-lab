@@ -79,27 +79,70 @@ for TB in $TBS; do
         DUTDIR="$ROOT/rtl/common"
     fi
 
-    # 顶层模块（nco_top / blinky_top 这种）会实例化 rtl/common 里的模块
-    # （reset_sync / edge_detect / sync_2ff），所以除了本 stage 的 rtl/，
-    # 还要把 rtl/common 一起编进去。DUTDIR 本身就是 common 时跳过，
-    # 否则同一个文件会被列两次，iverilog 会报模块重复定义。
-    COMMONDIR="$ROOT/rtl/common"
-    SRCS=$(find "$DUTDIR" -name '*.v' | sort | tr '\n' ' ')
-    if [ "$DUTDIR" != "$COMMONDIR" ]; then
-        SRCS="$SRCS$(find "$COMMONDIR" -name '*.v' | sort | tr '\n' ' ')"
+    # ── 跨 stage 依赖（sNN_xxx/deps.txt）─────────────────────────────
+    # 板级顶层会复用别的 stage 的模块（比如 s02 的 mixer_top 要例化 s01 的 nco），
+    # 而这个模块不在本 stage 的 rtl/ 里。deps.txt 每行写一个 **stage 目录名**：
+    #     s01_nco
+    # 这里就把它的 rtl/*.v 编进来，并把它加进 -I（`include 用）。
+    DEPDIRS=""
+    if [ -f "$ROOT/$STAGE/deps.txt" ]; then
+        DEPDIRS=$(tr -d '\r' < "$ROOT/$STAGE/deps.txt" \
+                  | grep -v '^[[:space:]]*#' | grep -v '^[[:space:]]*$')
     fi
 
-    # 查表数据目录（sNN_xxx/lut/）。$readmemh 的路径是相对**仿真进程的工作目录**，
-    # 而 vvp 是在 build/ 里跑的 —— RTL 里写 "s01_nco/lut/sin.mem" 这种相对路径
-    # 一定找不到。所以这里把绝对路径以宏 LUTDIR 传进去，RTL 侧写：
+    # 顶层模块（nco_top / mixer_top 这种）还会实例化 rtl/common 里的模块
+    # （reset_sync / edge_detect / sync_2ff）。所以文件清单 = 本 stage rtl/
+    # + rtl/common + 各依赖 stage 的 rtl/，最后 sort -u 去重 ——
+    # 同一个文件列两次，iverilog 会报模块重复定义。
+    COMMONDIR="$ROOT/rtl/common"
+    RTLS="$DUTDIR $COMMONDIR"
+    DEPINCS=""
+    for D in $DEPDIRS; do
+        if [ -d "$ROOT/$D/rtl" ]; then
+            RTLS="$RTLS $ROOT/$D/rtl"
+            DEPINCS="$DEPINCS -I $ROOT/$D/rtl"
+        else
+            echo "  ⚠ deps.txt 里写的 $D 没有 rtl/ 目录，已忽略" >&2
+        fi
+    done
+    SRCS=$(for d in $RTLS; do find "$d" -name '*.v'; done | sort -u | tr '\n' ' ')
+
+    # ── 查表数据目录（sNN_xxx/lut/）→ 宏 LUTDIR ──────────────────────
+    # $readmemh 的路径是相对**仿真进程的工作目录**，而 vvp 是在 build/ 里跑的 ——
+    # RTL 里写 "s01_nco/lut/sin.mem" 这种相对路径一定找不到。所以这里把绝对路径
+    # 以宏 LUTDIR 传进去，RTL 侧写：
     #     `ifndef LUTDIR
     #       `define LUTDIR "s01_nco/lut/"    // 综合/手工跑时的兜底
     #     `endif
     #     $readmemh({`LUTDIR, "sin.mem"}, rom);
     # 注意 -D 的值需要带**真正的双引号**，所以下面用 \"；路径含空格会散架（本仓库不会）。
-    LUTDEF=""
+    #
+    # 规则：本 stage 自己的 lut/ 优先；自己没有就沿 deps 找第一个带 lut/ 的
+    # （s02 自己没表，用的是 s01_nco/lut —— nco.v 里的 $readmemh 需要它）。
+    # ⚠️ 全仓库只支持**一个** LUTDIR：RTL 里写死了这个宏名，
+    #    两个 stage 各带一套表就会打架。真到那天再改成"一张表一个宏"。
+    LUTSRC=""
     if [ -d "$ROOT/$STAGE/lut" ]; then
-        LUTDEF="-DLUTDIR=\"$ROOT/$STAGE/lut/\""
+        LUTSRC="$ROOT/$STAGE/lut"
+    else
+        for D in $DEPDIRS; do
+            if [ -d "$ROOT/$D/lut" ]; then
+                LUTSRC="$ROOT/$D/lut"
+                break
+            fi
+        done
+    fi
+    LUTDEF=""
+    if [ -n "$LUTSRC" ]; then
+        LUTDEF="-DLUTDIR=\"$LUTSRC/\""
+    fi
+
+    # ── 参考向量目录（sNN_xxx/vec/）→ 宏 VECDIR ──────────────────────
+    # 同 LUTDIR：$readmemh 读不到文件时**不报错**，所以一律传绝对路径。
+    # 向量文件由 scripts/gen_mixer_vec.py 生成（Python 参考模型 + 回放）。
+    VECDEF=""
+    if [ -d "$ROOT/$STAGE/vec" ]; then
+        VECDEF="-DVECDIR=\"$ROOT/$STAGE/vec/\""
     fi
 
     echo "──────────────────────────────────────────────"
@@ -107,8 +150,8 @@ for TB in $TBS; do
 
     # shellcheck disable=SC2086
     "$SIM" -g2005 -Wall -s "$NAME" \
-        -I "$TBDIR" -I "$ROOT/tb" -I "$ROOT/rtl/common" -I "$DUTDIR" \
-        $LUTDEF -DDUMP_VCD -o "$VVP" $SRCS "$TBPATH" > "$CLOG" 2>&1
+        -I "$TBDIR" -I "$ROOT/tb" -I "$ROOT/rtl/common" -I "$DUTDIR" $DEPINCS \
+        $LUTDEF $VECDEF -DDUMP_VCD -o "$VVP" $SRCS "$TBPATH" > "$CLOG" 2>&1
     RC=$?
 
     if [ "$RC" -ne 0 ]; then

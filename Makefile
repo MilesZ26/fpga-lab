@@ -18,6 +18,8 @@ help:
 	@echo "                        例：make wave VCD=build/tb_blinky.vcd"
 	@echo "  make lut              重新生成 NCO 查表数据（s01_nco/lut/*.mem）"
 	@echo "  make lut-check        只校验表文件与生成器一致，不写文件"
+	@echo "  make mixer-vec        重新生成 s02 混频器的 Python 参考向量"
+	@echo "  make mixer-vec-check  只校验参考向量与生成器一致，不写文件"
 	@echo "  make clean            删除 build/"
 	@echo ""
 	@echo "  make hooks            安装 pre-commit 守卫（拦住 Vivado 中间产物）"
@@ -70,6 +72,17 @@ lut:
 lut-check:
 	@$(PYTHON) scripts/gen_lut.py --check s01_nco/lut
 
+# ── s02 混频器参考向量 ───────────────────────────────────────
+# 由 scripts/gen_mixer_vec.py 用 Python 参考模型生成（验收用的 golden vectors，
+# 和 RTL 完全无关的一份实现 —— 这是它能抓 bug 的前提）。
+# 生成器里带 assert（输入越界、用例数没对齐都会直接报错），所以重新生成是安全的。
+# ⚠️ 用例数变了要同步改 s02_mixer/tb/tb_mixer.v 里的 VEC_MAX_CASES。
+mixer-vec:
+	@$(PYTHON) scripts/gen_mixer_vec.py --out s02_mixer/vec
+
+mixer-vec-check:
+	@$(PYTHON) scripts/gen_mixer_vec.py --check s02_mixer/vec
+
 clean:
 	@rm -rf build
 	@echo "已删除 build/"
@@ -88,4 +101,4 @@ hooks:
 check:
 	@sh scripts/hooks/pre-commit && echo "✓ 暂存区没问题"
 
-.PHONY: help setup sim lint list wave lut lut-check clean hooks check
+.PHONY: help setup sim lint list wave lut lut-check mixer-vec mixer-vec-check clean hooks check

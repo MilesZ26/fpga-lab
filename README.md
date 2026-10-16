@@ -3,8 +3,8 @@
 **方向：5G 基带数据通路**
 NCO → 复数混频 → FIR → 插值/抽取 → DUC / DDC
 
-**当前：Stage 0 已完成 —— 仿真闭环 + LED 已上板验证（板子上真的 1 Hz 闪）**，
-下一步做 **Stage 1 — NCO**
+**当前：Stage 1（NCO）已完成 —— 仿真 + 上板双闭环**；
+**Stage 2（复数混频）Mac 侧已完成（仿真全绿），上板 / ILA 进行中**
 
 - 完整规划 → [docs/路线图.md](docs/路线图.md)
 - 当前状态 → [docs/进度.md](docs/进度.md) ← **每次开工先读这个**
@@ -56,9 +56,11 @@ fpga-lab/
 │   ├── 路线图.md          ← 阶段规划与验收标准
 │   └── 上板指南.md        ← Vivado 从零上板全流程（引脚 / 器件 / 排障）
 ├── scripts/
-│   ├── sim.sh             ← 一键仿真（自动发现所有 tb_*.v）
+│   ├── sim.sh             ← 一键仿真（自动发现所有 tb_*.v，支持 deps.txt / VECDIR）
 │   ├── lint.sh            ← 静态检查
 │   ├── setup_tools.sh     ← 安装仿真器
+│   ├── gen_lut.py         ← 生成 NCO 查表数据（sin/cos.mem）
+│   ├── gen_mixer_vec.py   ← 生成混频器的 Python 参考向量（验收用）
 │   └── hooks/pre-commit   ← git 守卫（make hooks 安装）
 ├── rtl/common/            ← 跨模块复用的小件
 │   ├── reset_sync.v       ← 异步复位、同步释放
@@ -71,11 +73,20 @@ fpga-lab/
 │   └── tb_sync_2ff.v
 ├── s00_blinky/            ← Stage 0：点亮 LED + 验证闭环
 ├── s01_nco/               ← Stage 1：NCO（相位累加器 + 查表）
+│   └── lut/               ← sin/cos 查表数据（脚本生成，入库）
+├── s02_mixer/             ← Stage 2：复数混频
+│   ├── rtl/mixer.v        ← 算法本体
+│   ├── rtl/mixer_top.v    ← 板级顶层（实验台）
+│   ├── tb/                ← 算术级 + 系统级两个 testbench
+│   ├── vec/               ← Python 参考向量（$readmemh 回放）
+│   ├── constr/mixer.xdc   ← 引脚约束 + ILA 说明
+│   └── deps.txt           ← 声明依赖 s01_nco（sim.sh 会读）
 ├── logs/                  ← 板级综合 / 实现日志与报告
-└── ref/                   ← Python 参考模型、脚本
+└── ref/                   ← 参考资料
 ```
 
-**每个 `sNN_*/` 下固定三个部分**：`rtl/`（设计）、`tb/`（测试）、`TASK.md`（目标与验收标准）。
+**每个 `sNN_*/` 下固定三个部分**：`rtl/`（设计）、`tb/`（测试）、`TASK.md`（目标与验收标准）；
+另外按需有 `constr/`（XDC）、`lut/`（查表数据）、`vec/`（参考向量）、`deps.txt`（跨 stage 依赖）。
 一个模块 = 一个 stage = 一个目录。
 
 ## 开发约定（摘要）
