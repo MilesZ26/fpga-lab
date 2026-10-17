@@ -74,14 +74,11 @@
 
 ## ⚠️ 缺什么（说清楚，别当齐了）
 
-1. **「无 ILA」那一版报告没有了。** 同一个工程、同一个 `impl_1` run，
-   加 ILA 之后 `Reset Synthesis` 重跑，**旧报告被覆盖**。
-   所以 `docs/进度.md` 里「无 ILA：18 LUT / 35 Reg / 3 BRAM」那组数字
-   **目前仍然没有文件证据**，只有 ILA 版的 1124 / 1970 / 9。
-   要补：把工程里 `u_ila_0` + `dbg_hub` 的调试约束拆掉、**Reset Synthesis** 后重跑
-   （约 3 分钟），再回传一份到 [`no_ila/`](no_ila/README.md)。
-   完整操作（含"为什么删 XDC 而不是删网表"）写在
-   [docs/上板指南.md 第 7 步](../../docs/上板指南.md)。
+1. **「无 ILA」那一版已经到了，在 [`no_ila/`](no_ila/README.md)**（2026-10-17）。
+   **但基线只能取自综合报告**：综合 24 LUT / 34 Reg / **3 BRAM**，
+   而布局后只剩 14 / 34 / **0.5** —— 因为没有 ILA 之后 `fcos_o` 没有负载，
+   `opt_design` 把 cos 通路裁了（干净重跑也一样，不是流程问题）。
+   完整分析见 [docs/学习备忘.md 第 11 节](../../docs/学习备忘.md)。
 2. **没有 `report_drc` 之外的 methodology 结论摘录**：`.rpt` 原文件已回传，
    自己 grep 就行。
 3. **没有 `.ltx` / `.bit`**：`.ltx` 是 ILA 探针定义、`.bit` 是比特流，
