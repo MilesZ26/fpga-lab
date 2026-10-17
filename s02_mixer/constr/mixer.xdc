@@ -31,7 +31,7 @@
 ## 后者决定两个 NCO 的 FTW，进而决定混频后的输出频率。
 ## 两者不一致时波形照样在动，但频率不是你要的，而且很难从现象反推。
 
-set_property -dict {PACKAGE_PIN R4  IOSTANDARD LVCMOS33} [get_ports clk]
+set_property -dict {PACKAGE_PIN R4 IOSTANDARD LVCMOS33} [get_ports clk]
 create_clock -period 20.000 -name sys_clk [get_ports clk]
 
 
@@ -39,7 +39,7 @@ create_clock -period 20.000 -name sys_clk [get_ports clk]
 ## U7 = sys_rst_n，低有效，直接连不用取反。
 ## 按键先过 reset_sync（见 mixer_top.v），机械抖动和异步释放都由它兜住。
 
-set_property -dict {PACKAGE_PIN U7  IOSTANDARD LVCMOS33} [get_ports rst_n]
+set_property -dict {PACKAGE_PIN U7 IOSTANDARD LVCMOS33} [get_ports rst_n]
 
 
 ## ── LED ─────────────────────────────────────────────────────────────────────
@@ -52,10 +52,10 @@ set_property -dict {PACKAGE_PIN U7  IOSTANDARD LVCMOS33} [get_ports rst_n]
 ##    （例如 FREQ_IN=200_001、FREQ_LO=200_000）—— 但那时候 ILA 上就是一条直线，
 ##    两者不可兼得，想要哪个就综合哪一版。
 
-set_property -dict {PACKAGE_PIN V9  IOSTANDARD LVCMOS33} [get_ports {led[0]}]
-set_property -dict {PACKAGE_PIN Y8  IOSTANDARD LVCMOS33} [get_ports {led[1]}]
-set_property -dict {PACKAGE_PIN Y7  IOSTANDARD LVCMOS33} [get_ports {led[2]}]
-set_property -dict {PACKAGE_PIN W7  IOSTANDARD LVCMOS33} [get_ports {led[3]}]
+set_property -dict {PACKAGE_PIN V9 IOSTANDARD LVCMOS33} [get_ports {led[0]}]
+set_property -dict {PACKAGE_PIN Y8 IOSTANDARD LVCMOS33} [get_ports {led[1]}]
+set_property -dict {PACKAGE_PIN Y7 IOSTANDARD LVCMOS33} [get_ports {led[2]}]
+set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 
 
 ##=============================================================================
@@ -135,3 +135,42 @@ set_property -dict {PACKAGE_PIN W7  IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ## [ ] 下载后：led[0]（V9）半亮/微闪（50 kHz 太快，人眼看不清）
 ## [ ] ILA 上量输出周期 ≈ 1000 个采样点（50 kHz），并确认它≠输入周期（4 µs）
 ##=============================================================================
+
+create_debug_core u_ila_0 ila
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_DATA_DEPTH 8192 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property port_width 1 [get_debug_ports u_ila_0/clk]
+connect_debug_port u_ila_0/clk [get_nets [list clk_IBUF_BUFG]]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+set_property port_width 13 [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {i_out[0]} {i_out[1]} {i_out[2]} {i_out[3]} {i_out[4]} {i_out[5]} {i_out[6]} {i_out[7]} {i_out[8]} {i_out[9]} {i_out[10]} {i_out[11]} {i_out[12]}]]
+create_debug_port u_ila_0 probe
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe1]
+set_property port_width 13 [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list {q_out[0]} {q_out[1]} {q_out[2]} {q_out[3]} {q_out[4]} {q_out[5]} {q_out[6]} {q_out[7]} {q_out[8]} {q_out[9]} {q_out[10]} {q_out[11]} {q_out[12]}]]
+create_debug_port u_ila_0 probe
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe2]
+set_property port_width 12 [get_debug_ports u_ila_0/probe2]
+connect_debug_port u_ila_0/probe2 [get_nets [list {lo_sin[0]} {lo_sin[1]} {lo_sin[2]} {lo_sin[3]} {lo_sin[4]} {lo_sin[5]} {lo_sin[6]} {lo_sin[7]} {lo_sin[8]} {lo_sin[9]} {lo_sin[10]} {lo_sin[11]}]]
+create_debug_port u_ila_0 probe
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe3]
+set_property port_width 12 [get_debug_ports u_ila_0/probe3]
+connect_debug_port u_ila_0/probe3 [get_nets [list {sig_sin[0]} {sig_sin[1]} {sig_sin[2]} {sig_sin[3]} {sig_sin[4]} {sig_sin[5]} {sig_sin[6]} {sig_sin[7]} {sig_sin[8]} {sig_sin[9]} {sig_sin[10]} {sig_sin[11]}]]
+create_debug_port u_ila_0 probe
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe4]
+set_property port_width 12 [get_debug_ports u_ila_0/probe4]
+connect_debug_port u_ila_0/probe4 [get_nets [list {sig_cos[0]} {sig_cos[1]} {sig_cos[2]} {sig_cos[3]} {sig_cos[4]} {sig_cos[5]} {sig_cos[6]} {sig_cos[7]} {sig_cos[8]} {sig_cos[9]} {sig_cos[10]} {sig_cos[11]}]]
+create_debug_port u_ila_0 probe
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe5]
+set_property port_width 12 [get_debug_ports u_ila_0/probe5]
+connect_debug_port u_ila_0/probe5 [get_nets [list {lo_cos[0]} {lo_cos[1]} {lo_cos[2]} {lo_cos[3]} {lo_cos[4]} {lo_cos[5]} {lo_cos[6]} {lo_cos[7]} {lo_cos[8]} {lo_cos[9]} {lo_cos[10]} {lo_cos[11]}]]
+set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
+set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
+set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
+connect_debug_port dbg_hub/clk [get_nets clk_IBUF_BUFG]
