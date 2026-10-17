@@ -34,7 +34,7 @@
 ## 后者决定 PHI_INC = FREQ_HZ * 2^PHASE_W / CLK_HZ，进而决定实际输出频率。
 ## 两者不一致时 LED 照样会动，但节奏不是你想要的，而且很难从现象反推。
 
-set_property -dict {PACKAGE_PIN R4  IOSTANDARD LVCMOS33} [get_ports clk]
+set_property -dict {PACKAGE_PIN R4 IOSTANDARD LVCMOS33} [get_ports clk]
 create_clock -period 20.000 -name sys_clk [get_ports clk]
 
 
@@ -44,7 +44,7 @@ create_clock -period 20.000 -name sys_clk [get_ports clk]
 ## 注意本设计里按键**先过 reset_sync**（见 nco_top.v），
 ## 所以机械抖动和异步释放都由 reset_sync 兜住了，XDC 这边不需要额外处理。
 
-set_property -dict {PACKAGE_PIN U7  IOSTANDARD LVCMOS33} [get_ports rst_n]
+set_property -dict {PACKAGE_PIN U7 IOSTANDARD LVCMOS33} [get_ports rst_n]
 
 
 ## ── LED ─────────────────────────────────────────────────────────────────────
@@ -55,10 +55,10 @@ set_property -dict {PACKAGE_PIN U7  IOSTANDARD LVCMOS33} [get_ports rst_n]
 ## LED 极性和 IOSTANDARD 一样不影响"能不能看出来在动"：
 ## 低电平点亮只会让亮灭反向，方波还是方波。
 
-set_property -dict {PACKAGE_PIN V9  IOSTANDARD LVCMOS33} [get_ports {led[0]}]
-set_property -dict {PACKAGE_PIN Y8  IOSTANDARD LVCMOS33} [get_ports {led[1]}]
-set_property -dict {PACKAGE_PIN Y7  IOSTANDARD LVCMOS33} [get_ports {led[2]}]
-set_property -dict {PACKAGE_PIN W7  IOSTANDARD LVCMOS33} [get_ports {led[3]}]
+set_property -dict {PACKAGE_PIN V9 IOSTANDARD LVCMOS33} [get_ports {led[0]}]
+set_property -dict {PACKAGE_PIN Y8 IOSTANDARD LVCMOS33} [get_ports {led[1]}]
+set_property -dict {PACKAGE_PIN Y7 IOSTANDARD LVCMOS33} [get_ports {led[2]}]
+set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 
 
 ##=============================================================================
@@ -133,25 +133,4 @@ set_property -dict {PACKAGE_PIN W7  IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ## 然后重新走一遍 Set up Debug 即可。
 ##=============================================================================
 
-create_debug_core u_ila_0 ila
-set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
-set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
-set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
-set_property C_DATA_DEPTH 8192 [get_debug_cores u_ila_0]
-set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
-set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
-set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
-set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
-set_property port_width 1 [get_debug_ports u_ila_0/clk]
-connect_debug_port u_ila_0/clk [get_nets [list clk_IBUF_BUFG]]
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
-set_property port_width 12 [get_debug_ports u_ila_0/probe0]
-connect_debug_port u_ila_0/probe0 [get_nets [list {fcos_o[0]} {fcos_o[1]} {fcos_o[2]} {fcos_o[3]} {fcos_o[4]} {fcos_o[5]} {fcos_o[6]} {fcos_o[7]} {fcos_o[8]} {fcos_o[9]} {fcos_o[10]} {fcos_o[11]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe1]
-set_property port_width 12 [get_debug_ports u_ila_0/probe1]
-connect_debug_port u_ila_0/probe1 [get_nets [list {fsin_o[0]} {fsin_o[1]} {fsin_o[2]} {fsin_o[3]} {fsin_o[4]} {fsin_o[5]} {fsin_o[6]} {fsin_o[7]} {fsin_o[8]} {fsin_o[9]} {fsin_o[10]} {fsin_o[11]}]]
-set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
-set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
-set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
-connect_debug_port dbg_hub/clk [get_nets clk_IBUF_BUFG]
+
