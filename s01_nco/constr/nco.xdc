@@ -114,23 +114,30 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 
 
 ##=============================================================================
-## ⚠️ 以下是 Vivado 的 "Set up Debug" 自动追加的 ILA 调试配置
+## ⚠️ 这里原来有一段 Vivado "Set up Debug" 自动追加的 ILA 配置
+##    （`create_debug_core u_ila_0 …` 共 22 行，含 `dbg_hub` 那 4 行），
+##    **2026-10-17 已被删掉 —— 不是人手删的，是 Vivado 干的。**
 ##-----------------------------------------------------------------------------
-## 这段**不是手写的**，是 Vivado 在你点完 Set up Debug 之后自己写进这个文件的
-## （因为工程是"按路径引用"这个 XDC，不是拷贝一份 —— 见 docs/上板指南.md 第 1 步）。
+## 怎么没的：在 Vivado 里删掉**综合后网表**中的 `u_ila_0` 之后，Vivado
+## **自己改写了这个约束文件**：那段 Tcl 整段消失，顺手把上面几行
+## `set_property` 里的双空格规范成了单空格。见 docs/学习备忘.md 第 11 节。
 ##
-## 留着的好处：Reset Synthesis 之后 ILA 会自动重建，不用再走一遍 Set up Debug。
+## 所以现在这个文件是 **"无 ILA" 版** —— Reset Synthesis 之后不会再插 ILA。
+## 对仿真（`make sim`）零影响：ILA 只是板级调试器材，不进 RTL。
 ##
-## 什么时候删：这个 stage 的 ILA 调试结束、准备提交代码之前。
-## 它是调试脚手架不是设计的一部分，而且里面**写死了网名**
-## （clk_IBUF_BUFG / fcos_o[*] / fsin_o[*]），设计一改就可能对不上。
+## 想重新开 ILA（三选一）：
+##   ① 综合后走 Flow Navigator → SYNTHESIS → Set up Debug，勾 `fsin_o` / `fcos_o`；
+##      点完 OK 它会**再自动追加一次**到本文件末尾（和以前一样）。
+##   ② 从 git 取回带 ILA 段的那一版（提交 `ba807c3`）：
+##        git show ba807c3:s01_nco/constr/nco.xdc > s01_nco/constr/nco.xdc
+##   ③ 长期做法：把 ILA 段单独放 `ila_debug.xdc`，Sources 面板里右键 **Disable File**
+##      开关 ILA，就不必动这个主约束文件。
 ##
-## 另一个可能的坑：dbg_hub 的 C_CLK_INPUT_FREQ_HZ 写的是 300000000（300 MHz），
-## 而我们的时钟是 50 MHz。如果 ILA 出现"连不上 / 抓不到 / 超时"，
-## 先把这个值改成 50000000 再试。
-##
-## 如果 Vivado 重新综合时报 debug core 重复定义，把这一段整个删掉，
-## 然后重新走一遍 Set up Debug 即可。
+## 重新生成时会再遇到的两个坑（先记着）：
+##   - `dbg_hub` 的 `C_CLK_INPUT_FREQ_HZ` 默认写 300000000（300 MHz），
+##     我们的时钟是 50 MHz。ILA 若"连不上 / 抓不到 / 超时"，先改成 50000000。
+##   - 那段里**写死了网名**（`clk_IBUF_BUFG` / `fcos_o[*]` / `fsin_o[*]`），
+##     设计一改就对不上 —— 那时把整段删掉重走 Set up Debug。
 ##=============================================================================
 
 
