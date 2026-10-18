@@ -41,14 +41,18 @@ report_methodology        -file D:/Backup/Documents/GitHub/fpga-lab/logs/s03_fir
 
 ## 数字（**待填**）
 
-| 指标 | 综合后（无 ILA） | 布局后（含 ILA） | 对照 s02 |
+> **只收"带 ILA"这一版**（2026-10-18 决定，理由见 `docs/进度.md` 待决问题）：
+> 无 ILA 时 `fir_out` 没有任何负载，`opt_design` 会把整个 FIR 裁掉，那一版数字是垃圾。
+> 想要纯设计的 LUT/Reg/WNS，唯一触发条件是 **带 ILA 的 WNS < 0** 时分不清责任。
+
+| 指标 | 综合后（含 ILA） | 布局后（含 ILA） | 对照 s02（含 ILA） |
 |---|---|---|---|
-| Slice LUTs | ⬜ | ⬜ | 129 / 1464 |
-| Slice Registers | ⬜ | ⬜ | 92 / 2416 |
-| Block RAM Tile | ⬜ | ⬜ | 6 / 23 |
-| **DSP48E1** | ⬜ **（预估 ≈ 24，是 0 就说明系数表没读进来）** | ⬜ | 4 |
-| BUFGCTRL | ⬜ | ⬜ | 1 / 2 |
-| WNS / TNS | — | ⬜ | +5.697 ns |
+| Slice LUTs | ⬜ | ⬜ | 1464 |
+| Slice Registers | ⬜ | ⬜ | 2416 |
+| Block RAM Tile | ⬜ | ⬜ | 23 |
+| **DSP48E1** | ⬜ **（预估 ≈ 24；ILA 不占 DSP，所以这个数两版等价，是"系数表读没读进来"的判据）** | ⬜ | 4 |
+| BUFGCTRL | ⬜ | ⬜ | 2 |
+| WNS / TNS | — | ⬜ **（≥ 0 就等于纯设计也收敛）** | +5.697 ns |
 | WHS / THS | — | ⬜ | +0.059 ns |
 | DRC | — | ⬜ | 0 / 56 Warnings |
 | `opt_design` 耗时 | — | ⬜ | 3 分 08 秒 |
