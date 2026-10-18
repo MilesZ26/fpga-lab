@@ -67,12 +67,25 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ## 仓库外），所以兜底相对路径**必然读不到**。而且读不到时**不报错** ——
 ## 系数数组全是 x，综合出来的滤波器输出也是 x/0，极难查。
 ##
-## 正确做法（工程模式）：
-##   Settings → Synthesis → Verilog Options → Verilog Macros 里加
-##       Name  = FIR_COEFDIR
-##       Value = "D:/…/fpga-lab/s03_fir/lut/"
-##   **值里要带真正的双引号**，且**结尾必须有斜杠**（RTL 是拼 "coef.mem"）。
-##   改完设置记得 **Reset Synthesis**，否则不会生效（s01 踩过）。
+## 正确做法（工程模式，**2026-10-18 实测定案**）：
+##   Settings → Synthesis → Options → 【More Options】里写**一整行**：
+##
+##       -verilog_define FIR_COEFDIR="D:/…/fpga-lab/s03_fir/lut/"
+##
+##   ⚠️ More Options 里的内容会**原样拼到 synth_design 命令行**上，
+##      所以 `-verilog_define` 这个开关必须自己写。只写 `FIR_COEFDIR="…"`
+##      会报：ERROR: [Common 17-165] Too many positional options when parsing
+##      'FIR_COEFDIR="…"' —— 2026-10-18 本工程真的撞过这一下。
+##      （不是那个 "Verilog Macros / Name + Value" 两栏对话框；本机 2020.2 没走通。
+##        完整说明见 docs/学习备忘.md 第 13 节）
+##
+##   ⚠️ 值里要带真正的双引号，且**结尾必须有斜杠**（RTL 是拼 "coef.mem"）。
+##   ⚠️ 路径**只能出现一次**，也别漏目录层（本仓库是 …\Documents\GitHub\fpga-lab\…）。
+##   ⚠️ 改完设置记得 **Reset Synthesis**，否则不会生效（s01 踩过）。
+##
+##   怎么一眼确认配对了：看 …\s03_fir.runs\synth_1\fir_top.tcl 里 synth_design
+##   那一行，四样齐全就对：① 有 -verilog_define ② 宏名是 FIR_COEFDIR
+##                        ③ 只有一个路径 ④ 结尾有斜杠
 ##
 ## 非工程模式（Tcl）：
 ##   synth_design -verilog_define {FIR_COEFDIR="D:/…/fpga-lab/s03_fir/lut/"}
@@ -103,18 +116,18 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ##
 ##   ① 冲激周期：1024 个采样点 = 20.48 µs。8192 点的窗口里能看到 **8 个**冲激。
 ##   ② 每个冲激后面跟 47 个点的冲激响应：
-##        h[k] = round(2047 * coef[k] / 2^15)
-##      中心抽头 h[23] = round(2047*9810/32768) = **613**
-##      两端 h[0] = h[46] = **1**
-##      中间值见 s03_fir/lut/coef.mem（把系数乘 2047/32768 再四舍五入）
+##        h[k] = floor( (coef[k]*2047 + 2^14) / 2^15 )   ← 不是"四舍五入"，见下
+##      中心抽头 h[23] = **613**，两端 h[0] = h[46] = **1**
+##      **47 个点的完整表在 s03_fir/lut/expected_h.md**（对账直接查，别手算）
 ##   ③ 响应必须**关于第 23 个点对称** —— 这是线性相位的直接证据，
 ##      也是最容易一眼看出来的性质。
 ##   ④ 触发建议：`imp_dbg == 1`（单点冲激很适合当触发）。
 ##      别用 `fir_dbg == 613` 当触发：量化的峰值只有一个点，触发会时有时无
 ##      （s01 的坑：别用 == 峰值当触发，见 学习备忘 第 6 节）。
 ##
-## ⚠️ `dbg_hub` 的 `C_CLK_INPUT_FREQ_HZ` 默认可能是 300 MHz，我们的时钟是 50 MHz。
-##    ILA 若"连不上 / 抓不到 / 超时"，先把它改成 50000000。
+## ⚠️ `dbg_hub` 的 `C_CLK_INPUT_FREQ_HZ` 是 300 MHz（Vivado 默认），我们的时钟是 50 MHz。
+##    **不用急着改**：s02 就是带着这个默认值抓到波形的。只有 ILA
+##    "连不上 / 抓不到 / 超时"时才把它改成 50000000 再试。
 ## ⚠️ Vivado 会把它自己的调试配置**追加写回这个文件**（create_debug_core …）。
 ##    按 AGENTS.md「远端同步」第 5 条，**调试结束就整段删掉再提交**：
 ##    那段写死了网名（clk_IBUF_BUFG / fir_dbg[*]），设计一改就对不上，
@@ -133,3 +146,27 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ## [ ] ILA 上能看到周期 1024 点的冲激串，响应峰值 613、关于中心对称
 ## [ ] 调试结束，把 Vivado 追加的 create_debug_core 段删掉
 ##=============================================================================
+
+
+create_debug_core u_ila_0 ila
+set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
+set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
+set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
+set_property C_DATA_DEPTH 8192 [get_debug_cores u_ila_0]
+set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
+set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
+set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
+set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
+set_property port_width 1 [get_debug_ports u_ila_0/clk]
+connect_debug_port u_ila_0/clk [get_nets [list clk_IBUF_BUFG]]
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
+set_property port_width 13 [get_debug_ports u_ila_0/probe0]
+connect_debug_port u_ila_0/probe0 [get_nets [list {fir_dbg[0]} {fir_dbg[1]} {fir_dbg[2]} {fir_dbg[3]} {fir_dbg[4]} {fir_dbg[5]} {fir_dbg[6]} {fir_dbg[7]} {fir_dbg[8]} {fir_dbg[9]} {fir_dbg[10]} {fir_dbg[11]} {fir_dbg[12]}]]
+create_debug_port u_ila_0 probe
+set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe1]
+set_property port_width 1 [get_debug_ports u_ila_0/probe1]
+connect_debug_port u_ila_0/probe1 [get_nets [list imp_dbg]]
+set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
+set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
+set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
+connect_debug_port dbg_hub/clk [get_nets clk_IBUF_BUFG]
