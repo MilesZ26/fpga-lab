@@ -97,18 +97,24 @@ initial $readmemh({`FIR_COEFDIR, COEF_FILE}, coef);
 `FIR_COEFDIR`。旧的单一 `LUTDIR` 会导致"同一轮仿真里两张表只能指一个目录"，
 s03 加表之前已经改掉。
 
-### Vivado 侧（**还没实测**，s03 上板时验证）
+### Vivado 侧（**2026-10-18 实测定案**）
 
-工程模式：Settings → Synthesis → Verilog Options → Verilog Macros：
+工程模式：**Settings → Synthesis → Options → More Options**，写一整行：
 
+```text
+-verilog_define FIR_COEFDIR="D:/…/fpga-lab/s03_fir/lut/"
 ```
-Name  = FIR_COEFDIR
-Value = "D:/…/fpga-lab/s03_fir/lut/"
-```
 
-- 值里**必须带真正的双引号**，**结尾的 `/` 不能少**（RTL 是拼 `"coef.mem"` 的）
-- 改完记得 **Reset Synthesis**，否则不生效（s01 踩过）
+- `-verilog_define` **必须自己写**。More Options 的内容是**原样拼到
+  `synth_design` 命令行**上的，不是"宏名 + 宏值"两个字段的对话框。
+  只写 `FIR_COEFDIR="…"` 会报
+  `ERROR: [Common 17-165] Too many positional options`（s03 撞过）。
+- 值里**必须带真正的双引号**，**结尾的 `/` 不能少**（RTL 是拼 `"coef.mem"` 的），
+  路径**只能出现一次**。
+- 改完记得 **Reset Synthesis**（见 9.2 节），否则不生效。
 - 非工程模式：`synth_design -verilog_define {FIR_COEFDIR="D:/…/s03_fir/lut/"}`
+- 完整说明（含证据链和四个连带陷阱）见
+  [学习备忘 第 13 节](../../docs/学习备忘.md#13-vivado-20202宏在-more-options-里传--verilog_define不是勾-namevalue)。
 
 **怎么确认表真的进去了**（比翻日志快）：综合后看 `report_utilization`。
 
