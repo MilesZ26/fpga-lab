@@ -71,7 +71,7 @@ initial for (i = 0; i < 2**LUT_AW; i = i + 1)
 > `$readmemh` 读入（仿真和综合同一份数据）。生成器 `scripts/gen_lut.py`
 > （`make lut` / `make lut-check`），格式与路径坑见 `s01_nco/lut/README.md`，
 > 数据本身的校验在 `s01_nco/tb/tb_lut.v`（12 个检查点，已并入 `make sim`）。
-> **RTL 里读表照抄 `tb_lut.v` 的 `LUTDIR` 写法**，否则 vvp 在 `build/` 里跑会读不到
+> **RTL 里读表照抄 `tb_lut.v` 的 `NCO_LUTDIR` 写法**，否则 vvp 在 `build/` 里跑会读不到
 > 而且不报错（表里全是 x）。
 
 **② 有符号还是无符号**

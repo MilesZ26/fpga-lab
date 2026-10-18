@@ -62,15 +62,16 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ## ⚠️⚠️ 综合前必须先解决的一件事：$readmemh 找不到 s01_nco/lut/
 ##-----------------------------------------------------------------------------
 ## 本设计的 RTL 里只有 nco.v 会读表，而 nco.v 在 s01_nco/rtl/。
-## 所以 **LUTDIR 要指向 s01_nco/lut/，不是 s02_mixer/** —— 这个 stage
+## 所以 **NCO_LUTDIR 要指向 s01_nco/lut/，不是 s02_mixer/** —— 这个 stage
 ## 自己的数据在 s02_mixer/vec/ 里，但那是**仿真用的参考向量**，
 ## 综合根本不会去读（tb 才读）。
 ##
+##   ⚠️ 2026-10-18 起宏名是 `NCO_LUTDIR`（以前叫 `LUTDIR`，nco.v 仍兼容旧名）。
 ##   nco.v 里是这么读表的：
-##       `ifndef LUTDIR
-##         `define LUTDIR "s01_nco/lut/"      // 兜底：手工跑 iverilog / Vivado 综合
+##       `ifndef NCO_LUTDIR
+##         `define NCO_LUTDIR "s01_nco/lut/"   // 兜底：手工跑 iverilog / Vivado 综合
 ##       `endif
-##       initial $readmemh({`LUTDIR, "sin.mem"}, sin_rom);
+##       initial $readmemh({`NCO_LUTDIR, "sin.mem"}, sin_rom);
 ##
 ## $readmemh 的路径是相对**综合进程的工作目录**，不是 .v 文件所在目录，
 ## 所以那个兜底相对路径**必然读不到**。而且读不到时**不报错**：
@@ -78,13 +79,13 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ##
 ## 正确做法（工程模式下）：
 ##   Settings → Synthesis → Verilog Options → Verilog Macros 里加
-##       Name  = LUTDIR
+##       Name  = NCO_LUTDIR
 ##       Value = "D:/…/fpga-lab/s01_nco/lut/"
 ##   **值里要带真正的双引号**，且**结尾必须有斜杠**（RTL 是拼 "sin.mem"）。
 ##   改完设置记得 **Reset Synthesis**，否则不会生效（s01 踩过）。
 ##
 ## 非工程模式（Tcl）：
-##   synth_design -verilog_define {LUTDIR="D:/…/fpga-lab/s01_nco/lut/"}
+##   synth_design -verilog_define {NCO_LUTDIR="D:/…/fpga-lab/s01_nco/lut/"}
 ##
 ## 验收方法：综合完 report_utilization 里应该看到若干 RAMB
 ## （两个 nco 实例、每个两张 4096×12 的表，可能被共享），
@@ -129,7 +130,7 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ## [ ] create_clock 已填 20.000 ns（= 50 MHz），行首无 '#'
 ## [ ] mixer_top.v 里 CLK_HZ 默认值 = 50_000_000，与上面一致
 ## [ ] 器件封装 = xc7a100tfgg484-2（100T / fgg484 / -2）
-## [ ] **LUTDIR 指向 s01_nco/lut/**（不是 s02_mixer），改完 Reset Synthesis
+## [ ] **NCO_LUTDIR 指向 s01_nco/lut/**（不是 s02_mixer），改完 Reset Synthesis
 ## [ ] 综合日志里没有 $readmemh 读文件的告警，report_utilization 里 RAMB 数量 > 0
 ## [ ] Set up Debug 勾上 i_out / q_out（要省资源就别勾输入与本振）
 ## [ ] 下载后：led[0]（V9）半亮/微闪（50 kHz 太快，人眼看不清）

@@ -47,7 +47,7 @@
 //   输入频率是本设计的参数，不需要从波形上反推。
 //
 // 依赖：nco 来自 s01_nco/rtl/nco.v（见 s02_mixer/deps.txt），
-//       它靠 `LUTDIR 宏找 s01_nco/lut/*.mem —— 综合前必须把 LUTDIR 指对，
+//       它靠 `NCO_LUTDIR 宏找 s01_nco/lut/*.mem —— 综合前必须把 NCO_LUTDIR 指对，
 //       否则 $readmemh 不报错、表里全 x（坑的细节见 s01_nco/constr/nco.xdc）。
 //=============================================================================
 

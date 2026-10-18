@@ -11,7 +11,7 @@
 // 表路径：
 //   $readmemh 的路径是相对**仿真进程的工作目录**（sim.sh 在 build/ 里跑 vvp），
 //   不是相对 RTL/testbench 文件所在目录。所以 sim.sh 会传进来一个绝对路径宏
-//   `LUTDIR`；直接手工跑 iverilog 时用下面的默认值（相对仓库根）。
+//   `NCO_LUTDIR`；直接手工跑 iverilog 时用下面的默认值（相对仓库根）。
 //
 // 检查点（12 个）：
 //   1. 四个象限的特征值（0 / ±2047 / 0）
@@ -27,8 +27,12 @@ module tb_lut;
     localparam DEPTH  = 1 << LUT_AW;
     localparam AMP    = (1 << (AW-1)) - 1;      // 2047
 
-`ifndef LUTDIR
-  `define LUTDIR "s01_nco/lut/"
+`ifndef NCO_LUTDIR
+  `ifdef LUTDIR
+    `define NCO_LUTDIR `LUTDIR
+  `else
+    `define NCO_LUTDIR "s01_nco/lut/"
+  `endif
 `endif
 
     reg signed [AW-1:0] sin_rom [0:DEPTH-1];
@@ -41,9 +45,9 @@ module tb_lut;
     real    amp_pp;
 
     initial begin
-        $readmemh({`LUTDIR, "sin.mem"}, sin_rom);
-        $readmemh({`LUTDIR, "cos.mem"}, cos_rom);
-        $display("LUTDIR = %s", `LUTDIR);
+        $readmemh({`NCO_LUTDIR, "sin.mem"}, sin_rom);
+        $readmemh({`NCO_LUTDIR, "cos.mem"}, cos_rom);
+        $display("NCO_LUTDIR = %s", `NCO_LUTDIR);
         $display("表深 = %0d，幅值位宽 = %0d，满幅 = %+0d", DEPTH, AW, AMP);
 
         // ── 1. 特征点 ────────────────────────────────────────────

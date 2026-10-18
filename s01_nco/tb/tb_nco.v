@@ -28,8 +28,12 @@
 module tb_nco;
     `include "tb_common.vh"
 
-`ifndef LUTDIR
-  `define LUTDIR "s01_nco/lut/"
+`ifndef NCO_LUTDIR
+  `ifdef LUTDIR
+    `define NCO_LUTDIR `LUTDIR
+  `else
+    `define NCO_LUTDIR "s01_nco/lut/"
+  `endif
 `endif
 
     // ── DUT A：主验收对象 ────────────────────────────────────
@@ -105,8 +109,8 @@ module tb_nco;
     endtask
 
     initial begin
-        $readmemh({`LUTDIR, "sin.mem"}, exp_sin);
-        $readmemh({`LUTDIR, "cos.mem"}, exp_cos);
+        $readmemh({`NCO_LUTDIR, "sin.mem"}, exp_sin);
+        $readmemh({`NCO_LUTDIR, "cos.mem"}, exp_cos);
 
         // ══ 1. 复位行为 ═══════════════════════════════════════
         rst_n = 1'b0;

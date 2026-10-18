@@ -20,6 +20,10 @@ help:
 	@echo "  make lut-check        只校验表文件与生成器一致，不写文件"
 	@echo "  make mixer-vec        重新生成 s02 混频器的 Python 参考向量"
 	@echo "  make mixer-vec-check  只校验参考向量与生成器一致，不写文件"
+	@echo "  make fir-coef         重新生成 FIR 系数表（s03_fir/lut/*.mem）"
+	@echo "  make fir-coef-check   只校验系数表与生成器一致，不写文件"
+	@echo "  make fir-vec          重新生成 s03 FIR 的 Python 参考向量"
+	@echo "  make fir-vec-check    只校验参考向量与生成器一致，不写文件"
 	@echo "  make clean            删除 build/"
 	@echo ""
 	@echo "  make hooks            安装 pre-commit 守卫（拦住 Vivado 中间产物）"
@@ -83,6 +87,23 @@ mixer-vec:
 mixer-vec-check:
 	@$(PYTHON) scripts/gen_mixer_vec.py --check s02_mixer/vec
 
+# ── s03 FIR 系数 / 参考向量 ──────────────────────────────────
+# 系数表由 scripts/gen_fir_coef.py 用窗函数法离线设计 + Q1.15 量化；
+# 参考向量由 scripts/gen_fir_vec.py 用 Python 逐位模型生成。
+# 三者（coef.mem / fir_vec.txt / tb_fir.v 的参数）是**成套**的：
+# 头 9 个字里存了 IW/OW/SHIFT/ROUND 和系数校验和，TB 会先对一遍。
+fir-coef:
+	@$(PYTHON) scripts/gen_fir_coef.py --out s03_fir/lut
+
+fir-coef-check:
+	@$(PYTHON) scripts/gen_fir_coef.py --check s03_fir/lut
+
+fir-vec:
+	@$(PYTHON) scripts/gen_fir_vec.py --out s03_fir/vec
+
+fir-vec-check:
+	@$(PYTHON) scripts/gen_fir_vec.py --check s03_fir/vec
+
 clean:
 	@rm -rf build
 	@echo "已删除 build/"
@@ -101,4 +122,4 @@ hooks:
 check:
 	@sh scripts/hooks/pre-commit && echo "✓ 暂存区没问题"
 
-.PHONY: help setup sim lint list wave lut lut-check mixer-vec mixer-vec-check clean hooks check
+.PHONY: help setup sim lint list wave lut lut-check mixer-vec mixer-vec-check fir-coef fir-coef-check fir-vec fir-vec-check clean hooks check

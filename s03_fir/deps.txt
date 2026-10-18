@@ -1,0 +1,12 @@
+# s03_fir 依赖的其它 stage（每行一个目录名，相对仓库根；# 后面是注释）
+#
+# 为什么需要这个文件：
+#   tb_table_binding.v 要**同时**例化 s01 的 nco 和本 stage 的 fir，
+#   用来回归"一个表一个宏"的修复：nco 读 s01_nco/lut/*.mem（NCO_LUTDIR），
+#   fir 读 s03_fir/lut/coef5.mem（FIR_COEFDIR）。如果 sim.sh 还像以前那样
+#   只传一个 LUTDIR，这两个模块里必有一个读错目录 —— 测试会直接红。
+#
+# 除了这个回归 TB，本 stage 的 RTL（fir.v / fir_top.v）**不依赖** s01_nco；
+# 板级顶层用的是"冲激发生器"，不是 NCO。
+#
+s01_nco

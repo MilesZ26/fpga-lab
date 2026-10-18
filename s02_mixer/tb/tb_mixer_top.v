@@ -36,8 +36,12 @@
 module tb_mixer_top;
     `include "tb_common.vh"
 
-`ifndef LUTDIR
-  `define LUTDIR "s01_nco/lut/"
+`ifndef NCO_LUTDIR
+  `ifdef LUTDIR
+    `define NCO_LUTDIR `LUTDIR
+  `else
+    `define NCO_LUTDIR "s01_nco/lut/"
+  `endif
 `endif
 
     localparam integer CLK_HZ  = 1024;

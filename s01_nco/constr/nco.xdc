@@ -66,25 +66,28 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ##-----------------------------------------------------------------------------
 ## nco.v 里是这么读表的：
 ##
-##     `ifndef LUTDIR
-##       `define LUTDIR "s01_nco/lut/"      // 兜底：手工跑 iverilog / Vivado 综合
+##     `ifndef NCO_LUTDIR
+##       `define NCO_LUTDIR "s01_nco/lut/"   // 兜底：手工跑 iverilog / Vivado 综合
 ##     `endif
-##     initial $readmemh({`LUTDIR, "sin.mem"}, sin_rom);
+##     initial $readmemh({`NCO_LUTDIR, "sin.mem"}, sin_rom);
 ##
 ## $readmemh 的路径是相对**综合进程的工作目录**，不是相对 .v 文件所在目录。
 ## Vivado 的 run 目录在工程里（仓库外），所以那个兜底相对路径**必然读不到**。
 ## 而且读不到时**不报错**——ROM 里全是 x，波形一片红，极难查。
 ##
+## ⚠️ 2026-10-18 起宏名是 `NCO_LUTDIR`（以前叫 `LUTDIR`）。`nco.v` 仍兼容旧名，
+##    但新工程请用新名 —— 全仓库已经改成"一个表一个宏"（FIR 用 `FIR_COEFDIR`）。
+##
 ## 三种做法，按推荐度：
 ##
 ##   ① 给 Vivado 传宏（推荐，一行搞定；工程模式下在
 ##      Settings → Synthesis → Verilog Options → Verilog Macros 里加）：
-##         Name  = LUTDIR
+##         Name  = NCO_LUTDIR
 ##         Value = "D:/Backup/Documents/GitHub/fpga-lab/s01_nco/lut/"
 ##      注意 **值里要带真正的双引号**，且**结尾必须有斜杠**（RTL 是拼 "sin.mem"）。
 ##
 ##   ② 非工程模式（Tcl）：synth_design 时给
-##         -verilog_define {LUTDIR="D:/.../s01_nco/lut/"}
+##         -verilog_define {NCO_LUTDIR="D:/.../s01_nco/lut/"}
 ##      （花括号保住引号）
 ##
 ##   ③ 临时把 .mem 拷到 Vivado 的 run 目录并改兜底路径 —— 不推荐，
@@ -106,7 +109,7 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ## [ ] create_clock 已填 20.000 ns（= 50 MHz），行首无 '#'
 ## [ ] nco_top.v 里 CLK_HZ 默认值 = 50_000_000，与上面一致
 ## [ ] 器件封装 = xc7a100tfgg484-2（100T / fgg484 / -2）
-## [ ] LUTDIR 宏已按上面 ① 或 ② 配好
+## [ ] NCO_LUTDIR 宏已按上面 ① 或 ② 配好
 ## [ ] 综合日志里没有 $readmemh 读文件的告警，report_utilization 里 RAMB 数量 > 0
 ## [ ] 下载后 led[0]（V9）以约 1 Hz 闪 —— 这一颗灯的引脚是上板反证过的
 ## [ ] 想用 ILA：FREQ_HZ 改成 100_000，Set up Debug 勾 fsin_o / fcos_o

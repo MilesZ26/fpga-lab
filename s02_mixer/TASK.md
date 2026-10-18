@@ -161,8 +161,10 @@ RTL 的算术用肉眼看不出来，而在 testbench 里用 Verilog 再写一�
 1. Vivado 里建工程，器件 `xc7a100tfgg484-2`，加 `s02_mixer/rtl/*.v` + `s01_nco/rtl/nco.v`
    （或者直接把整个仓库的 `rtl/` 和 `s*/rtl/` 都加进去，Vivado 不在乎多余模块）
 2. 约束用 `s02_mixer/constr/mixer.xdc`
-3. **`LUTDIR` 宏指向 `s01_nco/lut/`**（不是 s02_mixer！这个 stage 的数据在
-   `vec/` 里，但那是仿真参考向量，综合不读）
+3. **`NCO_LUTDIR` 宏指向 `s01_nco/lut/`**（不是 s02_mixer！这个 stage 的数据在
+   `vec/` 里，但那是仿真参考向量，综合不读）。
+   ⚠️ 2026-10-18 起宏名从 `LUTDIR` 改成 `NCO_LUTDIR`（一个表一个宏；
+   `nco.v` 仍兼容旧名，但新工程请用新名）
 4. Set up Debug 挂 `i_out` / `q_out`（省资源）或再加上 `sig_*` / `lo_*`
 5. 下载后：`led[0]` 是半亮（50 kHz 人眼跟不上）；**ILA 的输出周期应该是 1000 个采样点**
    （50 kHz @ 50 MHz），而 `sig_cos` 的周期是 200 个点 —— 这就是"频率被搬走了"。
@@ -180,7 +182,7 @@ s02_mixer/
 ├── tb/tb_mixer.v           ← 算术级验收（45 个检查点）
 ├── tb/tb_mixer_top.v       ← 系统级验收（24 个检查点）
 ├── vec/mixer_{a,b,c,d}.txt ← Python 参考向量（各 1620 个用例）
-└── constr/mixer.xdc        ← 引脚 + LUTDIR 提醒 + ILA 说明
+└── constr/mixer.xdc        ← 引脚 + NCO_LUTDIR 提醒 + ILA 说明
 ```
 
 ## 完成之后

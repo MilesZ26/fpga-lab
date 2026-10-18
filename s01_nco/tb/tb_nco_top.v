@@ -33,8 +33,12 @@
 module tb_nco_top;
     `include "tb_common.vh"
 
-`ifndef LUTDIR
-  `define LUTDIR "s01_nco/lut/"
+`ifndef NCO_LUTDIR
+  `ifdef LUTDIR
+    `define NCO_LUTDIR `LUTDIR
+  `else
+    `define NCO_LUTDIR "s01_nco/lut/"
+  `endif
 `endif
 
     localparam integer CLK_HZ  = 1024;
@@ -86,8 +90,8 @@ module tb_nco_top;
     endtask
 
     initial begin
-        $readmemh({`LUTDIR, "sin.mem"}, exp_sin);
-        $readmemh({`LUTDIR, "cos.mem"}, exp_cos);
+        $readmemh({`NCO_LUTDIR, "sin.mem"}, exp_sin);
+        $readmemh({`NCO_LUTDIR, "cos.mem"}, exp_cos);
 
         // ══ 1. 上电复位 ══════════════════════════════════════
         rst_n = 1'b0;

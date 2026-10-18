@@ -56,12 +56,16 @@ python3 scripts/gen_lut.py --lut-aw 10 --aw 16 --out /tmp/lut   # 换一组参�
 - 所以 `scripts/sim.sh` 会自动把绝对路径以宏传进来，RTL 侧统一这么写：
 
 ```verilog
-`ifndef LUTDIR
-  `define LUTDIR "s01_nco/lut/"     // 兜底：手工跑 iverilog / Vivado 综合
+`ifndef NCO_LUTDIR
+  `define NCO_LUTDIR "s01_nco/lut/"   // 兜底：手工跑 iverilog / Vivado 综合
 `endif
 
-initial $readmemh({`LUTDIR, "sin.mem"}, sin_rom);
+initial $readmemh({`NCO_LUTDIR, "sin.mem"}, sin_rom);
 ```
+
+> **2026-10-18 宏改名**：以前全仓库只有一个 `LUTDIR`，s03 加 FIR 系数表后
+> 同一轮仿真里会打架。现在一个表一个宏：NCO 用 `NCO_LUTDIR`，FIR 用 `FIR_COEFDIR`。
+> `nco.v` 仍兼容旧名 `LUTDIR`（旧 Vivado 工程不用改），但新工程请用新名。
 
 `tb_lut.v` 就是这么用的，可以直接抄。
 
@@ -91,21 +95,21 @@ CRITICAL WARNING: [Synth 8-4445] could not open $readmem data file
 | 做法 | 结果 |
 |---|---|
 | **把 `.mem` 加进工程 source** | ❌ **没用**。Vivado 报错里那句 "please make sure the file is added to project" 是**误导**——加进去了它也不会去搜 |
-| **`-verilog_define LUTDIR="<绝对路径>/"`** | ✅ **正确解法** |
+| **`-verilog_define NCO_LUTDIR="<绝对路径>/"`** | ✅ **正确解法** |
 | 把 `.mem` 拷到 run 目录下的 `s01_nco/lut/` | ⚠️ 能跑通，但只适合做诊断（会造成仿真/综合各用一份独立数据，别长期用） |
 
 工程模式下的填法：**Settings → Synthesis → Options → More Options**：
 
 ```
--verilog_define LUTDIR="D:/Backup/Documents/GitHub/fpga-lab/s01_nco/lut/"
+-verilog_define NCO_LUTDIR="D:/Backup/Documents/GitHub/fpga-lab/s01_nco/lut/"
 ```
 
 ⚠️ 两个容易翻车的点：
 
 1. **值里必须带真正的双引号**，**结尾的 `/` 不能少**
-   （RTL 里是 ``$readmemh({`LUTDIR, "sin.mem"}, ...)`` 拼起来的）。
+   （RTL 里是 ``$readmemh({`NCO_LUTDIR, "sin.mem"}, ...)`` 拼起来的）。
 2. **宏名一个字都不能错。** s01 上板时把它写成了 `LUDIR`（少一个 `T`），
-   于是 `` `ifndef LUTDIR `` 判定"没定义"→ 走兜底路径 → 表全 x →
+   于是 `` `ifndef NCO_LUTDIR `` 判定"没定义"→ 走兜底路径 → 表全 x →
    **整个 NCO 被综合优化掉**，板上四颗灯全灭。
    **识别特征**：报错信息里显示的是**兜底相对路径**而不是你填的绝对路径 ——
    看到这个就说明宏压根没生效。

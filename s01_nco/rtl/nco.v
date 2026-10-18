@@ -39,8 +39,21 @@ module nco #(
     output reg  signed [AW-1:0] fcos_o     // 余弦波输出（二进制补码）
 );
 
-`ifndef LUTDIR
-  `define LUTDIR "s01_nco/lut/"
+// ── 查表目录（一个表一个宏，2026-10-18 改）───────────────────────────────
+// 以前全仓库只有一个 `LUTDIR`，s03 加 FIR 系数表后会打架（同一轮仿真只能指一个目录）。
+// 现在每张表一个语义明确的宏：NCO 的表用 `NCO_LUTDIR`，FIR 系数用 `FIR_COEFDIR`。
+//
+// 兼容旧配置：如果只定义了老名字 `LUTDIR`（例如 Windows 上旧的 Vivado 工程），
+// 就沿用它；什么都没定义时走兜底相对路径（手工跑 iverilog / Vivado 综合）。
+//
+// ⚠️ 和以前一样：$readmemh 的路径相对**仿真/综合进程的工作目录**，不是 .v 所在目录。
+//    所以 make sim 会传绝对路径；Vivado 里必须配 NCO_LUTDIR（见 constr/nco.xdc）。
+`ifndef NCO_LUTDIR
+  `ifdef LUTDIR
+    `define NCO_LUTDIR `LUTDIR
+  `else
+    `define NCO_LUTDIR "s01_nco/lut/"
+  `endif
 `endif
 
     localparam integer DEPTH = (1 << LUT_AW);   // 表深
@@ -51,8 +64,8 @@ module nco #(
     reg signed [AW-1:0] sin_rom [0:DEPTH-1];
     reg signed [AW-1:0] cos_rom [0:DEPTH-1];
     initial begin
-        $readmemh({`LUTDIR, "sin.mem"}, sin_rom);
-        $readmemh({`LUTDIR, "cos.mem"}, cos_rom);
+        $readmemh({`NCO_LUTDIR, "sin.mem"}, sin_rom);
+        $readmemh({`NCO_LUTDIR, "cos.mem"}, cos_rom);
     end
 
     localparam [63:0] PHI_INC_64 = FREQ_HZ << PHASE_W;    // 64 位里移位，编译期算

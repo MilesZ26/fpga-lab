@@ -68,7 +68,7 @@
 |nco         | fcos_o_reg | 4096x12       | Block RAM      |
 ```
 
-这就是 `LUTDIR` 配对了的间接证据：`$readmemh` 读不到文件时表还是会被推断成 ROM，
+这就是 `NCO_LUTDIR`（当时叫 `LUTDIR`）配对了的间接证据：`$readmemh` 读不到文件时表还是会被推断成 ROM，
 但内容全是 x —— 所以**这条本身不能证明路径对**，它只证明"表没被优化掉"。
 真正的证据是上板后 ILA 抓到了正弦（见 `docs/进度.md`）。
 

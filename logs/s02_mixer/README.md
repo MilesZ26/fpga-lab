@@ -12,7 +12,7 @@ ILA 里看到 `i_out` 的周期是 `sig_sin` 的 **5 倍** —— 250 kHz 与 20
 | 顶层 | `mixer_top`（`FREQ_IN=250k`、`FREQ_LO=200k`、**`CONJ=1` 下变频**） |
 | 综合 | 19:27（**没有 ILA**，ILA 是之后加的） |
 | 实现 | 19:39–19:42（**有 ILA**，6 个探针） |
-| 关键宏 | `LUTDIR = <仓库>/s01_nco/lut/`（s02 自己没有 `lut/`） |
+| 关键宏 | `NCO_LUTDIR = <仓库>/s01_nco/lut/`（当时叫 `LUTDIR`；s02 自己没有 `lut/`） |
 
 ## 这里有什么
 

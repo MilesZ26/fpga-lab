@@ -107,39 +107,49 @@ for TB in $TBS; do
     done
     SRCS=$(for d in $RTLS; do find "$d" -name '*.v'; done | sort -u | tr '\n' ' ')
 
-    # ── 查表数据目录（sNN_xxx/lut/）→ 宏 LUTDIR ──────────────────────
+    # ── 查表数据目录（sNN_xxx/lut/）→ 一个表一个宏 ─────────────────────
     # $readmemh 的路径是相对**仿真进程的工作目录**，而 vvp 是在 build/ 里跑的 ——
     # RTL 里写 "s01_nco/lut/sin.mem" 这种相对路径一定找不到。所以这里把绝对路径
-    # 以宏 LUTDIR 传进去，RTL 侧写：
-    #     `ifndef LUTDIR
-    #       `define LUTDIR "s01_nco/lut/"    // 综合/手工跑时的兜底
+    # 以宏传进去，RTL 侧写：
+    #     `ifndef NCO_LUTDIR
+    #       `define NCO_LUTDIR "s01_nco/lut/"   // 综合/手工跑时的兜底
     #     `endif
-    #     $readmemh({`LUTDIR, "sin.mem"}, rom);
+    #     $readmemh({`NCO_LUTDIR, "sin.mem"}, rom);
     # 注意 -D 的值需要带**真正的双引号**，所以下面用 \"；路径含空格会散架（本仓库不会）。
     #
-    # 规则：本 stage 自己的 lut/ 优先；自己没有就沿 deps 找第一个带 lut/ 的
-    # （s02 自己没表，用的是 s01_nco/lut —— nco.v 里的 $readmemh 需要它）。
-    # ⚠️ 全仓库只支持**一个** LUTDIR：RTL 里写死了这个宏名，
-    #    两个 stage 各带一套表就会打架。真到那天再改成"一张表一个宏"。
-    LUTSRC=""
-    if [ -d "$ROOT/$STAGE/lut" ]; then
-        LUTSRC="$ROOT/$STAGE/lut"
-    else
-        for D in $DEPDIRS; do
-            if [ -d "$ROOT/$D/lut" ]; then
-                LUTSRC="$ROOT/$D/lut"
-                break
-            fi
-        done
-    fi
-    LUTDEF=""
-    if [ -n "$LUTSRC" ]; then
-        LUTDEF="-DLUTDIR=\"$LUTSRC/\""
-    fi
+    # ⚠️ 2026-10-18 改：以前全仓库只有一个 LUTDIR，s03 有 FIR 系数表之后会打架
+    #    （同一轮仿真里 nco.v 要 s01 的表、fir.v 要 s03 的表，一个宏只能指一个目录）。
+    #    现在按 stage 给语义宏：s01_nco → NCO_LUTDIR，s03_fir → FIR_COEFDIR。
+    #    新增带 lut/ 的 stage 时，在下面 table_macro_for 里加一行；RTL 里用对应宏。
+    table_macro_for() {
+        case "$1" in
+            s01_nco) echo NCO_LUTDIR ;;
+            s03_fir) echo FIR_COEFDIR ;;
+            *)       echo "" ;;
+        esac
+    }
+
+    # 当前 stage + 依赖 stage，去重后逐个查 lut/（同 stage 只传一次宏）
+    TABLEDEF=""
+    SEEN_STAGES=" "
+    for D in $STAGE $DEPDIRS; do
+        case "$SEEN_STAGES" in
+            *" $D "*) continue ;;
+        esac
+        SEEN_STAGES="$SEEN_STAGES$D "
+        [ -d "$ROOT/$D/lut" ] || continue
+        TMAC=$(table_macro_for "$D")
+        if [ -z "$TMAC" ]; then
+            echo "  ⚠ $D/lut 存在但没有宏映射，这份表不会被加载" >&2
+            continue
+        fi
+        TABLEDEF="$TABLEDEF -D${TMAC}=\"$ROOT/$D/lut/\""
+    done
 
     # ── 参考向量目录（sNN_xxx/vec/）→ 宏 VECDIR ──────────────────────
-    # 同 LUTDIR：$readmemh 读不到文件时**不报错**，所以一律传绝对路径。
-    # 向量文件由 scripts/gen_mixer_vec.py 生成（Python 参考模型 + 回放）。
+    # 同查表：$readmemh 读不到文件时**不报错**，所以一律传绝对路径。
+    # 向量文件由 scripts/gen_mixer_vec.py / gen_fir_vec.py 生成（Python 参考模型）。
+    # 一个 testbench 只读自己 stage 的 vec/，所以这里不需要"一张表一个宏"。
     VECDEF=""
     if [ -d "$ROOT/$STAGE/vec" ]; then
         VECDEF="-DVECDIR=\"$ROOT/$STAGE/vec/\""
@@ -151,7 +161,7 @@ for TB in $TBS; do
     # shellcheck disable=SC2086
     "$SIM" -g2005 -Wall -s "$NAME" \
         -I "$TBDIR" -I "$ROOT/tb" -I "$ROOT/rtl/common" -I "$DUTDIR" $DEPINCS \
-        $LUTDEF $VECDEF -DDUMP_VCD -o "$VVP" $SRCS "$TBPATH" > "$CLOG" 2>&1
+        $TABLEDEF $VECDEF -DDUMP_VCD -o "$VVP" $SRCS "$TBPATH" > "$CLOG" 2>&1
     RC=$?
 
     if [ "$RC" -ne 0 ]; then

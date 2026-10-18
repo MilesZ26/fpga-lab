@@ -3,8 +3,9 @@
 **方向：5G 基带数据通路**
 NCO → 复数混频 → FIR → 插值/抽取 → DUC / DDC
 
-**当前：Stage 1（NCO）已完成 —— 仿真 + 上板双闭环**；
-**Stage 2（复数混频）Mac 侧已完成（仿真全绿），上板 / ILA 进行中**
+**当前：Stage 3（FIR）Mac 侧已完成 —— 仿真全绿**；
+**Stage 2（复数混频）已完成仿真 + 上板 + ILA 三闭环**；
+Stage 3 的 Vivado 综合 / 上板 / ILA 在 Windows 侧待做。
 
 - 完整规划 → [docs/路线图.md](docs/路线图.md)
 - 当前状态 → [docs/进度.md](docs/进度.md) ← **每次开工先读这个**
@@ -38,6 +39,8 @@ make sim TB=s00_blinky/tb/tb_blinky.v    # 只跑一个
 make lint               # 静态检查
 make list               # 列出所有 testbench
 make wave VCD=build/tb_blinky.vcd        # 用 Surfer 看波形
+make fir-coef-check                      # 校验 FIR 系数表与生成器一致
+make fir-vec-check                       # 校验 FIR 参考向量与生成器一致
 ```
 
 > iverilog 和 bison 由 `make setup` **源码编译**进 `tools/`（不进仓库，
@@ -61,6 +64,8 @@ fpga-lab/
 │   ├── setup_tools.sh     ← 安装仿真器
 │   ├── gen_lut.py         ← 生成 NCO 查表数据（sin/cos.mem）
 │   ├── gen_mixer_vec.py   ← 生成混频器的 Python 参考向量（验收用）
+│   ├── gen_fir_coef.py    ← 设计 FIR 低通并生成系数表（s03_fir/lut/*.mem）
+│   ├── gen_fir_vec.py     ← 生成 FIR 的 Python 参考向量（验收用）
 │   └── hooks/pre-commit   ← git 守卫（make hooks 安装）
 ├── rtl/common/            ← 跨模块复用的小件
 │   ├── reset_sync.v       ← 异步复位、同步释放
@@ -81,6 +86,14 @@ fpga-lab/
 │   ├── vec/               ← Python 参考向量（$readmemh 回放）
 │   ├── constr/mixer.xdc   ← 引脚约束 + ILA 说明
 │   └── deps.txt           ← 声明依赖 s01_nco（sim.sh 会读）
+├── s03_fir/               ← Stage 3：FIR 低通（对称预加 + 4 级流水）
+│   ├── rtl/fir.v          ← 算法本体
+│   ├── rtl/fir_top.v      ← 板级顶层（冲激发生器实验台）
+│   ├── tb/                ← 4 个 testbench（算术/系数/顶层/两张表回归）
+│   ├── lut/               ← 系数表（脚本生成，入库）
+│   ├── vec/               ← Python 参考向量（$readmemh 回放）
+│   ├── constr/fir.xdc     ← 引脚约束 + FIR_COEFDIR + ILA 说明
+│   └── deps.txt           ← 声明依赖 s01_nco（tb_table_binding 用）
 ├── logs/                  ← 板级综合 / 实现日志与报告
 └── ref/                   ← 参考资料
 ```
