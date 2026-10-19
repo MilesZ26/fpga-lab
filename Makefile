@@ -24,6 +24,10 @@ help:
 	@echo "  make fir-coef-check   只校验系数表与生成器一致，不写文件"
 	@echo "  make fir-vec          重新生成 s03 FIR 的 Python 参考向量"
 	@echo "  make fir-vec-check    只校验参考向量与生成器一致，不写文件"
+	@echo "  make resample-coef    重新生成 s04 半带系数表（s04_resample/lut/*.mem）"
+	@echo "  make resample-coef-check  只校验系数表与生成器一致，不写文件"
+	@echo "  make resample-vec     重新生成 s04 插值/抽取/级联参考向量"
+	@echo "  make resample-vec-check   只校验参考向量与生成器一致，不写文件"
 	@echo "  make clean            删除 build/"
 	@echo ""
 	@echo "  make hooks            安装 pre-commit 守卫（拦住 Vivado 中间产物）"
@@ -103,6 +107,23 @@ fir-vec:
 
 fir-vec-check:
 	@$(PYTHON) scripts/gen_fir_vec.py --check s03_fir/vec
+
+# ── s04 半带系数 / 参考向量 ──────────────────────────────────
+# 半带系数由 scripts/gen_hb_coef.py 生成：截止固定 1/4 采样率，
+# 生成器里有断言卡住"偶数偏移只有中心抽头"这条结构约束。
+# 参考向量由 scripts/gen_resample_vec.py 生成（interp / decim / cascade 三个文件），
+# 三者共用一张 hb_odd.mem，头里带系数校验和。
+resample-coef:
+	@$(PYTHON) scripts/gen_hb_coef.py --out s04_resample/lut
+
+resample-coef-check:
+	@$(PYTHON) scripts/gen_hb_coef.py --check s04_resample/lut
+
+resample-vec:
+	@$(PYTHON) scripts/gen_resample_vec.py --out s04_resample/vec
+
+resample-vec-check:
+	@$(PYTHON) scripts/gen_resample_vec.py --check s04_resample/vec
 
 clean:
 	@rm -rf build

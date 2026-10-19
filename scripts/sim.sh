@@ -123,9 +123,10 @@ for TB in $TBS; do
     #    新增带 lut/ 的 stage 时，在下面 table_macro_for 里加一行；RTL 里用对应宏。
     table_macro_for() {
         case "$1" in
-            s01_nco) echo NCO_LUTDIR ;;
-            s03_fir) echo FIR_COEFDIR ;;
-            *)       echo "" ;;
+            s01_nco)      echo NCO_LUTDIR ;;
+            s03_fir)      echo FIR_COEFDIR ;;
+            s04_resample) echo HB_COEFDIR ;;
+            *)            echo "" ;;
         esac
     }
 
