@@ -6,7 +6,7 @@
 
 - FPGA 复健项目。方向：**5G 基带数据通路**（NCO → 混频 → FIR → 插值/抽取 → DUC/DDC）。
 - 目标平台：Xilinx Artix-7（正点原子达芬奇 Pro，XC7A100T）。
-- 当前范围：**Stage 4 — 插值/抽取**（s04 的 Mac 侧已完成；Windows 侧综合/上板待做）。
+- 当前范围：**Stage 4 — 插值/抽取**（✅ 仿真 + 上板 + ILA 三闭环，2026-10-19）。
   完整规划见 `docs/路线图.md`。**s03/s04 是真正的硬骨头**，别用前三个 stage 的速度估算。
 - **两台机器：Mac（Apple Silicon）写 RTL、跑 `make sim` 验收；Windows 跑综合/实现/上板。**
   **Vivado 只有 Windows / Linux x86-64 版，没有 macOS 版**，所以上板只能在 Windows 上做。
@@ -74,6 +74,9 @@
    还会让 `opt_design` 多花几分钟、多占十几块 BRAM。
    **调试结束就整段删掉再提交**（s01 的 `nco.xdc` 现在就是干净的；
    s02 的 `mixer.xdc` 里还留着，属于待清理项）。
+   **更好的做法：调试约束单独存 `debug.xdc`**，在 File Properties 里设
+   `used_in_synthesis=false` / `used_in_implementation=true`；调试结束删这个文件，
+   主 XDC 保持干净（否则每次改调试核都可能把 `synth_1` 判成 out-of-date）。
 6. **两台机器都要开 `pull.rebase`**（见下），否则两台机器并发提交时
    `git pull` 的默认行为就是"分叉 + merge"。
 

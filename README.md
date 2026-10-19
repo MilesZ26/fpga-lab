@@ -3,9 +3,9 @@
 **方向：5G 基带数据通路**
 NCO → 复数混频 → FIR → 插值/抽取 → DUC / DDC
 
-**当前：Stage 4（插值 / 抽取）Mac 侧已完成 —— 全仓库 18/18、393 个检查点全绿**；
-Stage 0~3（LED / NCO / 复数混频 / FIR）都已完成仿真 + 上板 + ILA 三闭环；
-Stage 4 的 Vivado 综合 / 上板 / ILA 在 Windows 侧待做。
+**当前：Stage 4（插值 / 抽取）已完成 —— 全仓库 18/18、393 个检查点全绿；
+Vivado 实测 30 DSP、WNS 9.311 ns，ILA 上 7 个完整冲激逐点一致。**
+Stage 0~4（LED / NCO / 复数混频 / FIR / 插值抽取）都完成了仿真 + 上板 + ILA 三闭环。
 
 - 完整规划 → [docs/路线图.md](docs/路线图.md)
 - 当前状态 → [docs/进度.md](docs/进度.md) ← **每次开工先读这个**

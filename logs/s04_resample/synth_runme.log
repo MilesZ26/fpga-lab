@@ -1,0 +1,417 @@
+
+*** Running vivado
+    with args -log resample_top.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source resample_top.tcl
+
+
+
+****** Vivado v2020.2 (64-bit)
+  **** SW Build 3064766 on Wed Nov 18 09:12:45 MST 2020
+  **** IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+    ** Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+
+source resample_top.tcl -notrace
+Command: synth_design -top resample_top -part xc7a100tfgg484-2 -verilog_define HB_COEFDIR=\"D:/Backup/Documents/GitHub/fpga-lab/s04_resample/lut/\"
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Device 21-403] Loading part xc7a100tfgg484-2
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 5752
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'resample_top' [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/resample_top.v:29]
+	Parameter CLK_HZ bound to: 50000000 - type: integer 
+	Parameter HEART_HZ bound to: 1 - type: integer 
+	Parameter IMP_PERIOD bound to: 1024 - type: integer 
+	Parameter IW bound to: 12 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N bound to: 61 - type: integer 
+	Parameter OW_INT bound to: 13 - type: integer 
+	Parameter OW_RT bound to: 14 - type: integer 
+	Parameter SHIFT_I bound to: 14 - type: integer 
+	Parameter SHIFT_D bound to: 15 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter HB_HALF_64 bound to: 64'b0000000000000000000000000000000000000001011111010111100001000000 
+	Parameter HB_HALF bound to: 25000000 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'reset_sync' [D:/Backup/Documents/GitHub/fpga-lab/rtl/common/reset_sync.v:21]
+INFO: [Synth 8-6155] done synthesizing module 'reset_sync' (1#1) [D:/Backup/Documents/GitHub/fpga-lab/rtl/common/reset_sync.v:21]
+INFO: [Synth 8-6157] synthesizing module 'interp2' [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/interp2.v:55]
+	Parameter IW bound to: 12 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N bound to: 61 - type: integer 
+	Parameter OW bound to: 13 - type: integer 
+	Parameter SHIFT bound to: 14 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter COEF_FILE bound to: hb_odd.mem - type: string 
+	Parameter K bound to: 30 - type: integer 
+	Parameter PAIRS bound to: 15 - type: integer 
+	Parameter PA_W bound to: 13 - type: integer 
+	Parameter PROD_W bound to: 29 - type: integer 
+	Parameter SUM_W bound to: 34 - type: integer 
+	Parameter FINAL_W bound to: 35 - type: integer 
+	Parameter GROUPS bound to: 4 - type: integer 
+	Parameter GSUM_N bound to: 4 - type: integer 
+	Parameter LATENCY bound to: 4 - type: integer 
+	Parameter RND_SH bound to: 13 - type: integer 
+	Parameter RND_C bound to: 35'sb00000000000000000000010000000000000 
+	Parameter OW_MAX bound to: 35'sb00000000000000000000000111111111111 
+	Parameter OW_MIN bound to: 35'sb11111111111111111111111000000000000 
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s04_resample/lut/hb_odd.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/interp2.v:93]
+INFO: [Synth 8-6155] done synthesizing module 'interp2' (2#1) [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/interp2.v:55]
+INFO: [Synth 8-6157] synthesizing module 'decim2' [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/decim2.v:43]
+	Parameter IW bound to: 13 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N bound to: 61 - type: integer 
+	Parameter OW bound to: 14 - type: integer 
+	Parameter SHIFT bound to: 15 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter COEF_FILE bound to: hb_odd.mem - type: string 
+	Parameter K bound to: 30 - type: integer 
+	Parameter PAIRS bound to: 15 - type: integer 
+	Parameter TERMS bound to: 16 - type: integer 
+	Parameter PA_W bound to: 14 - type: integer 
+	Parameter PROD_W bound to: 30 - type: integer 
+	Parameter SUM_W bound to: 35 - type: integer 
+	Parameter FINAL_W bound to: 36 - type: integer 
+	Parameter GROUPS bound to: 4 - type: integer 
+	Parameter GSUM_N bound to: 4 - type: integer 
+	Parameter LATENCY bound to: 4 - type: integer 
+	Parameter HALF_COEF bound to: 16'sb0100000000000000 
+	Parameter RND_SH bound to: 14 - type: integer 
+	Parameter RND_C bound to: 36'sb000000000000000000000100000000000000 
+	Parameter OW_MAX bound to: 36'sb000000000000000000000001111111111111 
+	Parameter OW_MIN bound to: 36'sb111111111111111111111110000000000000 
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s04_resample/lut/hb_odd.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/decim2.v:78]
+INFO: [Synth 8-6155] done synthesizing module 'decim2' (3#1) [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/decim2.v:43]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'u_interp'. This will prevent further optimization [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/resample_top.v:97]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'u_decim'. This will prevent further optimization [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/resample_top.v:112]
+INFO: [Synth 8-6155] done synthesizing module 'resample_top' (4#1) [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/resample_top.v:29]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.035 . Memory (MB): peak = 1018.281 ; gain = 0.000
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/constr/resample.xdc]
+Finished Parsing XDC File [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/constr/resample.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/constr/resample.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/resample_top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/resample_top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1018.281 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.016 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tfgg484-2
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   36 Bit       Adders := 1     
+	   2 Input   35 Bit       Adders := 1     
+	   4 Input   35 Bit       Adders := 5     
+	   4 Input   34 Bit       Adders := 4     
+	   3 Input   34 Bit       Adders := 1     
+	   2 Input   14 Bit       Adders := 15    
+	   2 Input   13 Bit       Adders := 15    
++---Registers : 
+	               35 Bit    Registers := 4     
+	               34 Bit    Registers := 4     
+	               30 Bit    Registers := 16    
+	               29 Bit    Registers := 15    
+	               14 Bit    Registers := 1     
+	               13 Bit    Registers := 49    
+	               12 Bit    Registers := 30    
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input   14 Bit        Muxes := 2     
+	   2 Input   13 Bit        Muxes := 4     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff3f).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x110).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x3fe89).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x86).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0x3fd50).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3aa).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fae0).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0x1fd).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[13], operation Mode is: A*(B:0x3f2bf).
+DSP Report: operator prod[13] is absorbed into DSP prod[13].
+DSP Report: Generating DSP prod[14], operation Mode is: (A:0x2893)*B.
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x7a2).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x3ffd8).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x3b).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[3], operation Mode is: A*(B:0x3ffa6).
+DSP Report: operator prod[3] is absorbed into DSP prod[3].
+DSP Report: Generating DSP prod[0], operation Mode is: A*(B:0x1e).
+DSP Report: operator prod[0] is absorbed into DSP prod[0].
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff3f).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x110).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x3fe89).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x86).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0x3fd50).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3aa).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fae0).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0x1fd).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[13], operation Mode is: A*(B:0x3f2bf).
+DSP Report: operator prod[13] is absorbed into DSP prod[13].
+DSP Report: Generating DSP prod[14], operation Mode is: (A:0x2893)*B.
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x7a2).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x3ffd8).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x3b).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[3], operation Mode is: A*(B:0x3ffa6).
+DSP Report: operator prod[3] is absorbed into DSP prod[3].
+DSP Report: Generating DSP prod[0], operation Mode is: A*(B:0x1e).
+DSP Report: operator prod[0] is absorbed into DSP prod[0].
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:21 ; elapsed = 00:00:22 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+DSP: Preliminary Mapping	Report (see note below)
++------------+---------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name | DSP Mapping   | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++------------+---------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|interp2     | A*(B:0x3ff3f) | 13     | 9      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x110)   | 13     | 10     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3fe89) | 13     | 10     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x86)    | 13     | 9      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3fd50) | 13     | 11     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3aa)   | 13     | 11     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3fae0) | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x1fd)   | 13     | 10     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3f2bf) | 13     | 13     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | (A:0x2893)*B  | 13     | 15     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x7a2)   | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3ffd8) | 13     | 7      | -      | -      | 20     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3b)    | 13     | 7      | -      | -      | 20     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3ffa6) | 13     | 8      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x1e)    | 13     | 6      | -      | -      | 19     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3ff3f) | 14     | 9      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x110)   | 14     | 10     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3fe89) | 14     | 10     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x86)    | 14     | 9      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3fd50) | 14     | 11     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3aa)   | 14     | 11     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3fae0) | 14     | 12     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x1fd)   | 14     | 10     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3f2bf) | 14     | 13     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | (A:0x2893)*B  | 14     | 15     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x7a2)   | 14     | 12     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3ffd8) | 14     | 7      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3b)    | 14     | 7      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3ffa6) | 14     | 8      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x1e)    | 14     | 6      | -      | -      | 20     | 0    | 0    | -    | -    | -     | 0    | 0    | 
++------------+---------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:32 ; elapsed = 00:00:33 . Memory (MB): peak = 1018.281 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:35 ; elapsed = 00:00:36 . Memory (MB): peak = 1050.887 ; gain = 32.605
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:37 ; elapsed = 00:00:39 . Memory (MB): peak = 1053.934 ; gain = 35.652
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:42 ; elapsed = 00:00:43 . Memory (MB): peak = 1066.523 ; gain = 48.242
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:42 ; elapsed = 00:00:43 . Memory (MB): peak = 1066.523 ; gain = 48.242
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:42 ; elapsed = 00:00:44 . Memory (MB): peak = 1066.523 ; gain = 48.242
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:42 ; elapsed = 00:00:44 . Memory (MB): peak = 1066.523 ; gain = 48.242
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:42 ; elapsed = 00:00:44 . Memory (MB): peak = 1066.523 ; gain = 48.242
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:42 ; elapsed = 00:00:44 . Memory (MB): peak = 1066.523 ; gain = 48.242
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+-------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name          | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+-------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|decim2      | e_dly_reg[15][12] | 16     | 1     | YES          | NO                 | YES               | 1      | 0       | 
+|decim2      | p_reg_reg[15][25] | 17     | 12    | YES          | NO                 | YES               | 12     | 0       | 
++------------+-------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+--------+------+
+|      |Cell    |Count |
++------+--------+------+
+|1     |BUFG    |     1|
+|2     |CARRY4  |   257|
+|3     |DSP48E1 |    30|
+|4     |LUT1    |    75|
+|5     |LUT2    |   470|
+|6     |LUT3    |   327|
+|7     |LUT4    |    56|
+|8     |LUT5    |   274|
+|9     |LUT6    |   290|
+|10    |SRL16E  |    13|
+|11    |FDCE    |  2042|
+|12    |FDRE    |    13|
+|13    |IBUF    |     2|
+|14    |OBUF    |     4|
++------+--------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:42 ; elapsed = 00:00:44 . Memory (MB): peak = 1066.523 ; gain = 48.242
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:34 ; elapsed = 00:00:41 . Memory (MB): peak = 1066.523 ; gain = 48.242
+Synthesis Optimization Complete : Time (s): cpu = 00:00:43 ; elapsed = 00:00:44 . Memory (MB): peak = 1066.523 ; gain = 48.242
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.051 . Memory (MB): peak = 1066.523 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 287 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 1066.523 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+27 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:51 ; elapsed = 00:00:52 . Memory (MB): peak = 1066.523 ; gain = 65.387
+INFO: [Common 17-1381] The checkpoint 'D:/Backup/Documents/vivado_projects/s04_resample/s04_resample.runs/synth_1/resample_top.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_utilization -file resample_top_utilization_synth.rpt -pb resample_top_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Mon Oct 19 10:24:56 2026...
