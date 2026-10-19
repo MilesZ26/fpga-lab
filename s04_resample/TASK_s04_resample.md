@@ -288,7 +288,7 @@ wire signed [PROD_W-1:0] prod_pas = e_tap * HALF_COEF;   // ✅
 
 ```
 s04_resample/
-├── TASK.md                  ← 本文件
+├── TASK_s04_resample.md     ← 本文件
 ├── rtl/interp2.v            ← 2× 半带插值（偶相直通 + 奇相 15 乘）
 ├── rtl/decim2.v             ← 2× 半带抽取（两相输入 + 15 乘 + 0.5 直通）
 ├── rtl/resample_top.v       ← 板级实验台（冲激 → 插值 → 抽取 + LED + ILA）

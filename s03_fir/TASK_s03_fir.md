@@ -232,7 +232,7 @@ TB 的约定是：下降沿驱动 `x_in`，同一个下降沿读 `y_out`，第 k
 
 ```
 s03_fir/
-├── TASK.md                 ← 本文件
+├── TASK_s03_fir.md         ← 本文件
 ├── deps.txt                ← 声明 tb_table_binding 依赖 s01_nco
 ├── rtl/fir.v               ← 算法本体（对称预加 + 4 级流水）
 ├── rtl/fir_top.v           ← 板级顶层（冲激发生器 + FIR + LED + ILA）

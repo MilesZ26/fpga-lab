@@ -175,7 +175,7 @@ RTL 的算术用肉眼看不出来，而在 testbench 里用 Verilog 再写一�
 
 ```
 s02_mixer/
-├── TASK.md                 ← 本文件
+├── TASK_s02_mixer.md       ← 本文件
 ├── deps.txt                ← 声明"本 stage 依赖 s01_nco"（sim.sh 会读）
 ├── rtl/mixer.v             ← 算法本体（唯一会被 s05 复用的模块）
 ├── rtl/mixer_top.v         ← 板级顶层（实验台：两个 NCO + mixer + LED）

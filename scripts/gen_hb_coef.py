@@ -30,7 +30,7 @@
 
     ⚠️ 插值的移位是 **CW-2（14）**、抽取是 **CW-1（15）**，差的那一位就是
        "插值要乘 2"（零插值之后信号功率掉一半，必须补回来）。
-       这不是随手写的魔数，见 s04_resample/TASK.md 的「为什么插值少移一位」。
+       这不是随手写的魔数，见 s04_resample/TASK_s04_resample.md 的「为什么插值少移一位」。
 
 用法：
     python3 scripts/gen_hb_coef.py                       # 默认 61 抽头 / Hamming

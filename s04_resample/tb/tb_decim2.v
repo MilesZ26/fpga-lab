@@ -37,7 +37,7 @@ module tb_decim2;
     localparam integer CW    = 16;
     localparam integer N     = 61;
     localparam integer OW    = 13;
-    localparam integer SHIFT = 15;          // = CW-1：抽取不移位补偿（见 TASK.md）
+    localparam integer SHIFT = 15;          // = CW-1：抽取不移位补偿（见 TASK_s04_resample.md）
     localparam integer LAT   = 4;
     localparam integer K     = (N-1)/2;     // 30
     localparam integer HALF  = K/2;         // 15
