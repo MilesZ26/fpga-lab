@@ -127,7 +127,8 @@ git config rebase.autoStash true     # 有未提交改动时自动 stash，rebas
 > **Windows 侧不跑仿真（2026-10-19 定）。** 这台机器没有 `make` / `iverilog` / `vvp`，
 > **永远不要在这里尝试 `make sim` / `make lint`**，也不用每次 `git pull` 后“白跑一次”。
 > 仿真验收由 Mac 侧负责；Windows 侧拉完直接进 Vivado 综合/实现/上板。
-> 如果 Windows 侧改了 RTL，提交前仍要让 Mac 侧跑一次 `make sim`。
+> 如果 Windows 侧改了 RTL **逻辑**，提交前仍要让 Mac 侧跑一次 `make sim`；
+> 只改注释 / 文档不用。
 
 - 仿真器优先级：`iverilog`（默认，4 态、有 X 传播）> `verilator`（lint / SVA）。
   涉及 Vivado IP 行为模型时才考虑 `xsim`。
