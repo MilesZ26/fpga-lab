@@ -225,7 +225,7 @@ module tb_decim2;
             if (t >= LAT && (t - LAT) != HALF && y_out !== 0)
                 err = err + 1;
         end
-        `check_eq("x_e 冲激：除第 15 拍外输出全为 0", err, 0);
+        `check_eq("x_e 冲激：除输出下标 15 外全为 0", err, 0);
 
         // ── 3. 只打 x_o：30 个奇数抽头逐点对账 ─────────────────────
         do_reset;

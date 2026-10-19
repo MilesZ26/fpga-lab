@@ -180,7 +180,7 @@ module tb_resample_cascade;
             end
         end
         `check_eq("冲激响应第一个非零点在第 9 拍", first_nz, 9);
-        `check_eq("峰值 = 1991，出现在第 30 拍（延迟 30 = 15 + 15）", imp[30], 1991);
+        `check_eq("峰值 = 1991，出现在输出下标 30（半带群延迟 30 = 15 + 15）", imp[30], 1991);
 
         sym_err = 0;
         for (k = 9; k < 30; k = k + 1)

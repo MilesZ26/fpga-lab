@@ -6,7 +6,7 @@
 
 - FPGA 复健项目。方向：**5G 基带数据通路**（NCO → 混频 → FIR → 插值/抽取 → DUC/DDC）。
 - 目标平台：Xilinx Artix-7（正点原子达芬奇 Pro，XC7A100T）。
-- 当前范围：**Stage 3 — FIR 滤波**（s00/s01/s02 已完成，都是仿真 + 上板双闭环）。
+- 当前范围：**Stage 4 — 插值/抽取**（s04 的 Mac 侧已完成；Windows 侧综合/上板待做）。
   完整规划见 `docs/路线图.md`。**s03/s04 是真正的硬骨头**，别用前三个 stage 的速度估算。
 - **两台机器：Mac（Apple Silicon）写 RTL、跑 `make sim` 验收；Windows 跑综合/实现/上板。**
   **Vivado 只有 Windows / Linux x86-64 版，没有 macOS 版**，所以上板只能在 Windows 上做。
@@ -21,6 +21,7 @@
    **如果仿真器不可用，先停下来报告，不要改代码。**
    **`git pull` 之后也要重跑一次 `make sim` / `make lint`** —— 拉下来的可能是
    别人（另一台机器上）改过、但没在这台机器上验收过的 RTL。
+   （**Windows 侧例外**：没有 `make` / `iverilog`，不要尝试；见「仿真」一节。）
 
 2. **不允许跑 Vivado，但允许（并且应该）推 git。**
    `make sim` 通过、`make check`（pre-commit 守卫）通过之后，就提交并推两个远端
@@ -122,6 +123,11 @@ git config rebase.autoStash true     # 有未提交改动时自动 stash，rebas
 - 模块头部写注释块：功能 / 时钟域 / 延迟多少拍出结果 / 复位值。
 
 ## 仿真
+
+> **Windows 侧不跑仿真（2026-10-19 定）。** 这台机器没有 `make` / `iverilog` / `vvp`，
+> **永远不要在这里尝试 `make sim` / `make lint`**，也不用每次 `git pull` 后“白跑一次”。
+> 仿真验收由 Mac 侧负责；Windows 侧拉完直接进 Vivado 综合/实现/上板。
+> 如果 Windows 侧改了 RTL，提交前仍要让 Mac 侧跑一次 `make sim`。
 
 - 仿真器优先级：`iverilog`（默认，4 态、有 X 传播）> `verilator`（lint / SVA）。
   涉及 Vivado IP 行为模型时才考虑 `xsim`。
