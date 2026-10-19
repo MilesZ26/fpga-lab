@@ -115,7 +115,8 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ##               → ILA 第 **4..33** 点，峰值第 **18/19** 点
 ##        y_rt ：43 个点（k=9..51），峰值 **1991** 在 k=30，关于 30 对称
 ##               → ILA 第 **17..59** 点，峰值第 **38** 点
-##      偏移量：插值 y_e/y_o 是 +3 个采样点（LAT=4），级联 y_rt 是 +7（LAT=8）。
+##      从输出下标 k 换算到 cap 索引：插值 y_e/y_o 是 +3（LAT=4），
+##      级联 y_rt 是 +7（LAT=8）。
 ##      **逐点期望值在 `s04_resample/lut/expected_h.md`** —— 对账直接查，别手算。
 ##   ③ 触发建议：`imp_dbg == 1`。别用 `== 1991` 当触发（见学习备忘第 6 节）。
 ##   ④ 显示：`yo_dbg` / `yrt_dbg` 在 ILA 里改成 **signed**，否则负数是很大的正数。
