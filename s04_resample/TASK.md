@@ -266,8 +266,10 @@ wire signed [PROD_W-1:0] prod_pas = e_tap * HALF_COEF;   // ✅
 
 ## 这个 stage 的边界 / 留给 s05
 
-- **上板 / ILA 已完成**：实测 DSP **30**（插值 15 + 抽取 15），WNS **9.311 ns**，
+- **上板 / ILA 已完成**：实测 DSP **30**（插值 15 + 抽取 15），整体 WNS **9.311 ns**，
   7 个完整冲激逐点一致；资源/时序详见 `logs/s04_resample/README.md`。
+  ⚠️ 这个 WNS 是**异步复位 recovery 路径**（`async_default`），不是算术余量：
+  数据通路是 **+11.043 ns**。读法见 [学习备忘](../docs/学习备忘.md) 第 16 节。
 - **调试约束已从主 XDC 清掉**；下次重新 Set up Debug 时建议单独存 `debug.xdc`，
   并在 File Properties 里设 `used_in_synthesis=false`（主 XDC 参与综合，
   否则每次改调试核都会把 `synth_1` 判成 out-of-date）。
