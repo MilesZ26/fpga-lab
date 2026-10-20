@@ -16,7 +16,7 @@
 | ILA | `u_ila_0`：`tone_i/q_dbg[11:0]` + `ie/io/qe/qo_dbg[14:0]`，`C_DATA_DEPTH = 4096` |
 | 触发 | `tone_i_dbg[11]` 上升沿（触发点落在窗口 50%，sample 2048） |
 | 调试约束 | 独立文件 `constrs_2/new/debug.xdc`（`used_in_synthesis=false`） |
-| 波形 CSV | `D:\Backup\Documents\ila_data\20261020_duc.csv`（**本地，不入库**） |
+| 波形 CSV | [`csv/20261020_duc.csv`](csv/20261020_duc.csv)（入库） |
 
 ## 报告清单
 
@@ -31,7 +31,8 @@
 | `duc_top_clock_utilization_routed.rpt` | 时钟资源（BUFGCTRL = 2） |
 | `ila_check.txt` | ILA CSV 的频率 / 幅度 / 正交性判读 |
 
-> 波形图 / CSV 不进仓库（作者本地存）。仓库只收文本报告 + 本文件的数字结论。
+> 波形 CSV 在 `csv/`；PNG 截图不进仓库。本文件的数字可用
+> `python3 scripts/ila_check.py csv/20261020_duc.csv --pairs tone_i:tone_q,ie:qe,io:qo --iq ie:qe --ratio ie:tone_i` 复算。
 
 ## 实测资源
 

@@ -1,10 +1,11 @@
 # s06_ddc — ILA CSV 判读结论（DUC → DDC 回环）
 
-- 数据：`D:\Backup\Documents\ila_data\20261020_ddc.csv`
+- 数据：`csv/20261020_ddc.csv`（仓库内；原始导出也在作者本地 `ila_data/`）
 - 抓取时间：2026-10-20 18:16，深度 **4096**，触发点 **sample 2048**（窗口 50%）
 - 触发方式：比较类（ILA 不能对总线切位），非边沿
 - 采样时钟：`sys_clk` = 50 MHz；器件 xc7a100tfgg484-2，Vivado 2020.2
 - 判据来源：`s06_ddc/constr/ddc.xdc`、`s06_ddc/TASK_s06_ddc.md`
+- 复算：`python3 scripts/ila_check.py csv/20261020_ddc.csv --pairs ie:qe,io:qo,di:dq --iq ie:qe,di:dq --ratio ie:di`
 
 ## 方法
 

@@ -14,7 +14,7 @@
 | 关键宏 | `HB_COEFDIR = D:/Backup/Documents/GitHub/fpga-lab/s04_resample/lut/`（More Options 里写 `-verilog_define`） |
 | ILA | `u_ila_0`：`imp_dbg` + `ye_dbg[12:0]` + `yo_dbg[12:0]` + `yrt_dbg[13:0]`，`C_DATA_DEPTH = 8192` |
 | 触发 | `imp_dbg == 1`（不是 `yrt_dbg == 1991`） |
-| 波形 CSV | `D:\Backup\Documents\ila_data\20261019_resample.csv`（**本地，不入库**） |
+| 波形 CSV | [`csv/20261019_resample.csv`](csv/20261019_resample.csv)（入库） |
 
 ## 报告清单
 
@@ -30,7 +30,7 @@
 | `resample_top_methodology_drc_routed.rpt` | 方法论检查（19 Warnings） |
 | `ila_check.txt` | ILA CSV 与 Python 整数模型的逐点对账（7 个冲激） |
 
-> 波形图 / CSV 不进仓库（作者本地存）。仓库只收文本报告 + 本文件的数字结论。
+> 波形 CSV 在 `csv/` 目录（入库）；PNG 截图不进仓库。
 
 ## 实测资源
 

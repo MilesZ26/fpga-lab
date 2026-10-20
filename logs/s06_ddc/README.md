@@ -15,7 +15,7 @@
 | ILA | `ie/io/qe/qo_dbg[14:0]`（DUC 四相 60 位）+ `di/dq_dbg[12:0]`（DDC 输出 26 位），共 **86 位**，深度 4096 |
 | 触发 | **比较类触发**（ILA 不能对总线切位，没有边沿操作符）；触发点 sample 2048（窗口 50%） |
 | 约束 | 工程 run 用的是 `constrs_2`（工程内副本 `ddc.xdc` + `new/debug.xdc`）；**仓库 `constr/ddc.xdc` 没有被追加调试段** |
-| 波形 CSV | `D:\Backup\Documents\ila_data\20261020_ddc.csv`（**本地，不入库**） |
+| 波形 CSV | [`csv/20261020_ddc.csv`](csv/20261020_ddc.csv)（入库） |
 
 ## 报告清单
 
@@ -30,7 +30,8 @@
 | `ddc_top_clock_utilization_routed.rpt` | 时钟资源（BUFGCTRL = 2） |
 | `ila_check.txt` | ILA CSV 的频率比 / 幅度 / 正交性 / 包络判读 |
 
-> 波形图 / CSV 不进仓库（作者本地存）。仓库只收文本报告 + 本文件的数字结论。
+> 波形 CSV 在 `csv/`；PNG 截图不进仓库。本文件的数字可用
+> `python3 scripts/ila_check.py csv/20261020_ddc.csv --pairs ie:qe,io:qo,di:dq --iq ie:qe,di:dq --ratio ie:di` 复算。
 
 ## 实测资源
 
