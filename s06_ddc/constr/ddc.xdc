@@ -65,7 +65,7 @@ set_property -dict {PACKAGE_PIN W7 IOSTANDARD LVCMOS33} [get_ports {led[3]}]
 ##
 ## 默认参数下的预期波形（50 MHz、FREQ_SIG=500 kHz、FREQ_LO=2.5 MHz）：
 ##   ① DUC 侧：ie/qe 是 3 MHz（0.06 Fs）复单音，周期 ≈ 16.7 拍，幅度 ≈ 2040；
-##      io/qo 与 ie/qe 同频、错开半个 2Fs 采样。
+##      io/qo 与 ie/qe 同频、错开**一个 2Fs 采样**（10 ns = 半个输入采样）。
 ##   ② DDC 侧：di/dq 回到 **500 kHz（0.01 Fs）**，周期 100 拍，幅度 ≈ 2040；
 ##      di/dq 正交，复单音幅度基本恒定。
 ##   ③ 频率比 = 6:1（0.06 / 0.01）—— 这是"搬上去再搬下来"的最直观证据。
