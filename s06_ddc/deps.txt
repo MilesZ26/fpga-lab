@@ -1,0 +1,9 @@
+# s06_ddc 依赖的其它 stage（每行一个目录名）
+#
+# DDC = s04 的 decim2 + s02 的 mixer + s01 的 nco + s03 的 fir；
+# ddc_top 的回环还要例化 s05 的 duc_core。
+s01_nco
+s02_mixer
+s03_fir
+s04_resample
+s05_duc

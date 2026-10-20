@@ -28,6 +28,8 @@ help:
 	@echo "  make resample-coef-check  只校验系数表与生成器一致，不写文件"
 	@echo "  make resample-vec     重新生成 s04 插值/抽取/级联参考向量"
 	@echo "  make resample-vec-check   只校验参考向量与生成器一致，不写文件"
+	@echo "  make duc-vec          重新生成 s05 DUC / s06 DDC / 回环的参考向量"
+	@echo "  make duc-vec-check    只校验参考向量与生成器一致，不写文件"
 	@echo "  make clean            删除 build/"
 	@echo ""
 	@echo "  make hooks            安装 pre-commit 守卫（拦住 Vivado 中间产物）"
@@ -125,6 +127,17 @@ resample-vec:
 resample-vec-check:
 	@$(PYTHON) scripts/gen_resample_vec.py --check s04_resample/vec
 
+# ── s05 DUC / s06 DDC 整链参考向量 ──────────────────────────
+# 一个生成器出三个文件：s05_duc/vec/duc_vec.txt、
+# s06_ddc/vec/ddc_vec.txt、s06_ddc/vec/loopback_vec.txt。
+# 模型把 FIR / 混频 / 插值 / 抽取 / NCO 的位宽、舍入、饱和、LO 相位延迟
+# 全部按 RTL 的定义重算一遍；头里带系数校验和、PHI_INC、LAT、LO_DLY。
+duc-vec:
+	@$(PYTHON) scripts/gen_duc_ddc_vec.py
+
+duc-vec-check:
+	@$(PYTHON) scripts/gen_duc_ddc_vec.py --check s05_duc/vec s06_ddc/vec
+
 clean:
 	@rm -rf build
 	@echo "已删除 build/"
@@ -143,4 +156,4 @@ hooks:
 check:
 	@sh scripts/hooks/pre-commit && echo "✓ 暂存区没问题"
 
-.PHONY: help setup sim lint list wave lut lut-check mixer-vec mixer-vec-check fir-coef fir-coef-check fir-vec fir-vec-check clean hooks check
+.PHONY: help setup sim lint list wave lut lut-check mixer-vec mixer-vec-check fir-coef fir-coef-check fir-vec fir-vec-check resample-coef resample-coef-check resample-vec resample-vec-check duc-vec duc-vec-check clean hooks check

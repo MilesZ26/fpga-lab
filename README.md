@@ -3,9 +3,10 @@
 **方向：5G 基带数据通路**
 NCO → 复数混频 → FIR → 插值/抽取 → DUC / DDC
 
-**当前：Stage 4（插值 / 抽取）已完成 —— 全仓库 18/18、393 个检查点全绿；
-Vivado 实测 30 DSP、WNS 9.311 ns，ILA 上 7 个完整冲激逐点一致。**
-Stage 0~4（LED / NCO / 复数混频 / FIR / 插值抽取）都完成了仿真 + 上板 + ILA 三闭环。
+**当前：Stage 5（DUC 集成）+ Stage 6（DDC 回环）Mac 侧完成 —— 全仓库 24/24、
+538 个检查点全绿，19 个 RTL 文件 lint 无警告。**
+Stage 0~4（LED / NCO / 复数混频 / FIR / 插值抽取）已完成仿真 + 上板 + ILA 三闭环；
+**s05/s06 的仿真 + 整链回环已完成，Vivado 综合/上板待 Windows 侧执行**。
 
 - 完整规划 → [docs/路线图.md](docs/路线图.md)
 - 当前状态 → [docs/进度.md](docs/进度.md) ← **每次开工先读这个**
@@ -43,6 +44,7 @@ make fir-coef-check                      # 校验 FIR 系数表与生成器一�
 make fir-vec-check                       # 校验 FIR 参考向量与生成器一致
 make resample-coef-check                 # 校验半带系数表与生成器一致
 make resample-vec-check                  # 校验插值/抽取参考向量与生成器一致
+make duc-vec-check                       # 校验 DUC/DDC/回环参考向量与生成器一致
 ```
 
 > iverilog 和 bison 由 `make setup` **源码编译**进 `tools/`（不进仓库，
@@ -70,16 +72,20 @@ fpga-lab/
 │   ├── gen_fir_vec.py     ← 生成 FIR 的 Python 参考向量（验收用）
 │   ├── gen_hb_coef.py     ← 设计 2× 半带并生成系数表（s04_resample/lut/*.mem）
 │   ├── gen_resample_vec.py ← 生成插值/抽取/级联的参考向量（验收用）
+│   ├── gen_duc_ddc_vec.py ← 生成 DUC/DDC/回环的整链参考向量（验收用）
 │   └── hooks/pre-commit   ← git 守卫（make hooks 安装）
 ├── rtl/common/            ← 跨模块复用的小件
 │   ├── reset_sync.v       ← 异步复位、同步释放
 │   ├── edge_detect.v      ← 边沿检测
-│   └── sync_2ff.v         ← 两级同步器（CDC）
+│   ├── sync_2ff.v         ← 两级同步器（CDC）
+│   ├── serializer2.v      ← 2:1 并串（两相 → 2Fs 串行，需 2 倍时钟）
+│   └── deserializer2.v    ← 1:2 串并（2Fs 串行 → 两相）
 ├── tb/                    ← 公共 testbench
 │   ├── tb_common.vh       ← 断言宏（check / check_eq / tb_done）
 │   ├── tb_edge_detect.v
 │   ├── tb_reset_sync.v
-│   └── tb_sync_2ff.v
+│   ├── tb_sync_2ff.v
+│   └── tb_serializer2.v   ← 并串 → 串并回环（10 个检查点）
 ├── s00_blinky/            ← Stage 0：点亮 LED + 验证闭环
 ├── s01_nco/               ← Stage 1：NCO（相位累加器 + 查表）
 │   └── lut/               ← sin/cos 查表数据（脚本生成，入库）
@@ -106,6 +112,20 @@ fpga-lab/
 │   ├── lut/               ← 半带系数表（脚本生成，入库）
 │   ├── vec/               ← Python 参考向量（interp/decim/cascade）
 │   └── constr/resample.xdc ← 引脚约束 + HB_COEFDIR + ILA 说明
+├── s05_duc/               ← Stage 5：DUC 集成（FIR → 混频 → 2× 插值）
+│   ├── rtl/duc_core.v     ← 算法本体
+│   ├── rtl/duc_top.v      ← 板级实验台（测试单音 + ILA 探针）
+│   ├── tb/                ← 2 个 testbench（核心 41 + 顶层 13）
+│   ├── vec/duc_vec.txt    ← 整链参考向量（脚本生成，入库）
+│   ├── constr/duc.xdc     ← 引脚 + 三个表的宏 + ILA 判读
+│   └── deps.txt           ← s01 / s02 / s03 / s04
+├── s06_ddc/               ← Stage 6：DDC 回环（抽取 → 下变频 → FIR）
+│   ├── rtl/ddc_core.v     ← 算法本体
+│   ├── rtl/ddc_top.v      ← 板级回环（DUC → DDC + 活动 LED）
+│   ├── tb/                ← 3 个 testbench（核心 37 + 回环 27 + 顶层 17）
+│   ├── vec/               ← ddc_vec.txt + loopback_vec.txt
+│   ├── constr/ddc.xdc     ← 引脚 + 三个表的宏 + ILA 判读
+│   └── deps.txt           ← s01 / s02 / s03 / s04 / s05
 ├── logs/                  ← 板级综合 / 实现日志与报告
 └── ref/                   ← 参考资料
 ```
