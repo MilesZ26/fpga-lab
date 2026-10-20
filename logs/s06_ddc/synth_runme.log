@@ -1,0 +1,993 @@
+
+*** Running vivado
+    with args -log ddc_top.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source ddc_top.tcl
+
+
+
+****** Vivado v2020.2 (64-bit)
+  **** SW Build 3064766 on Wed Nov 18 09:12:45 MST 2020
+  **** IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+    ** Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+
+source ddc_top.tcl -notrace
+Command: synth_design -top ddc_top -part xc7a100tfgg484-2 -verilog_define NCO_LUTDIR=\"D:/Backup/Documents/GitHub/fpga-lab/s01_nco/lut/\" -verilog_define FIR_COEFDIR=\"D:/Backup/Documents/GitHub/fpga-lab/s03_fir/lut/\" -verilog_define HB_COEFDIR=\"D:/Backup/Documents/GitHub/fpga-lab/s04_resample/lut/\"
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a100t'
+INFO: [Device 21-403] Loading part xc7a100tfgg484-2
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 3708
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1017.984 ; gain = 0.000
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'ddc_top' [D:/Backup/Documents/GitHub/fpga-lab/s06_ddc/rtl/ddc_top.v:32]
+	Parameter CLK_HZ bound to: 50000000 - type: integer 
+	Parameter HEART_HZ bound to: 1 - type: integer 
+	Parameter FREQ_SIG bound to: 500000 - type: integer 
+	Parameter FREQ_LO bound to: 2500000 - type: integer 
+	Parameter PHASE_W bound to: 32 - type: integer 
+	Parameter LUT_AW bound to: 12 - type: integer 
+	Parameter AW bound to: 12 - type: integer 
+	Parameter IW bound to: 12 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N_FIR bound to: 47 - type: integer 
+	Parameter N_HB bound to: 61 - type: integer 
+	Parameter OW_DUC bound to: 15 - type: integer 
+	Parameter OW_DDC bound to: 13 - type: integer 
+	Parameter LO_DLY_DUC bound to: 4 - type: integer 
+	Parameter LO_DLY_DDC bound to: 23 - type: integer 
+	Parameter ACT_W bound to: 16 - type: integer 
+	Parameter ACT_THRESH bound to: 16 - type: integer 
+	Parameter HB_HALF_64 bound to: 64'b0000000000000000000000000000000000000001011111010111100001000000 
+	Parameter HB_HALF bound to: 25000000 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'reset_sync' [D:/Backup/Documents/GitHub/fpga-lab/rtl/common/reset_sync.v:21]
+INFO: [Synth 8-6155] done synthesizing module 'reset_sync' (1#1) [D:/Backup/Documents/GitHub/fpga-lab/rtl/common/reset_sync.v:21]
+INFO: [Synth 8-6157] synthesizing module 'nco' [D:/Backup/Documents/GitHub/fpga-lab/s01_nco/rtl/nco.v:29]
+	Parameter CLK_HZ bound to: 50000000 - type: integer 
+	Parameter FREQ_HZ bound to: 500000 - type: integer 
+	Parameter PHASE_W bound to: 32 - type: integer 
+	Parameter LUT_AW bound to: 12 - type: integer 
+	Parameter AW bound to: 12 - type: integer 
+	Parameter DEPTH bound to: 4096 - type: integer 
+	Parameter PHI_INC_64 bound to: 64'b0000000000000111101000010010000000000000000000000000000000000000 
+	Parameter PHI_INC bound to: 32'b00000010100011110101110000101000 
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s01_nco/lut/sin.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s01_nco/rtl/nco.v:67]
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s01_nco/lut/cos.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s01_nco/rtl/nco.v:68]
+INFO: [Synth 8-6155] done synthesizing module 'nco' (2#1) [D:/Backup/Documents/GitHub/fpga-lab/s01_nco/rtl/nco.v:29]
+INFO: [Synth 8-6157] synthesizing module 'duc_core' [D:/Backup/Documents/GitHub/fpga-lab/s05_duc/rtl/duc_core.v:59]
+	Parameter IW bound to: 12 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N_FIR bound to: 47 - type: integer 
+	Parameter N_HB bound to: 61 - type: integer 
+	Parameter AW bound to: 12 - type: integer 
+	Parameter PHASE_W bound to: 32 - type: integer 
+	Parameter LUT_AW bound to: 12 - type: integer 
+	Parameter CLK_HZ bound to: 50000000 - type: integer 
+	Parameter FREQ_HZ bound to: 2500000 - type: integer 
+	Parameter OW_FIR bound to: 13 - type: integer 
+	Parameter OW_MIX bound to: 14 - type: integer 
+	Parameter OW_INT bound to: 15 - type: integer 
+	Parameter SHIFT_FIR bound to: 15 - type: integer 
+	Parameter SHIFT_MIX bound to: 11 - type: integer 
+	Parameter SHIFT_INT bound to: 14 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter LO_DLY bound to: 4 - type: integer 
+	Parameter COEF_FILE_FIR bound to: coef.mem - type: string 
+	Parameter COEF_FILE_HB bound to: hb_odd.mem - type: string 
+INFO: [Synth 8-6157] synthesizing module 'fir' [D:/Backup/Documents/GitHub/fpga-lab/s03_fir/rtl/fir.v:82]
+	Parameter IW bound to: 12 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N bound to: 47 - type: integer 
+	Parameter OW bound to: 13 - type: integer 
+	Parameter SHIFT bound to: 15 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter COEF_FILE bound to: coef.mem - type: string 
+	Parameter HALF bound to: 23 - type: integer 
+	Parameter NP bound to: 24 - type: integer 
+	Parameter PA_W bound to: 13 - type: integer 
+	Parameter PROD_W bound to: 29 - type: integer 
+	Parameter SUM_W bound to: 35 - type: integer 
+	Parameter FINAL_W bound to: 36 - type: integer 
+	Parameter GROUPS bound to: 4 - type: integer 
+	Parameter GSUM_N bound to: 6 - type: integer 
+	Parameter LATENCY bound to: 4 - type: integer 
+	Parameter RND_SH bound to: 14 - type: integer 
+	Parameter RND_C bound to: 36'sb000000000000000000000100000000000000 
+	Parameter OW_MAX bound to: 36'sb000000000000000000000000111111111111 
+	Parameter OW_MIN bound to: 36'sb111111111111111111111111000000000000 
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s03_fir/lut/coef.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s03_fir/rtl/fir.v:117]
+INFO: [Synth 8-6155] done synthesizing module 'fir' (3#1) [D:/Backup/Documents/GitHub/fpga-lab/s03_fir/rtl/fir.v:82]
+INFO: [Synth 8-6157] synthesizing module 'nco__parameterized0' [D:/Backup/Documents/GitHub/fpga-lab/s01_nco/rtl/nco.v:29]
+	Parameter CLK_HZ bound to: 50000000 - type: integer 
+	Parameter FREQ_HZ bound to: 2500000 - type: integer 
+	Parameter PHASE_W bound to: 32 - type: integer 
+	Parameter LUT_AW bound to: 12 - type: integer 
+	Parameter AW bound to: 12 - type: integer 
+	Parameter DEPTH bound to: 4096 - type: integer 
+	Parameter PHI_INC_64 bound to: 64'b0000000000100110001001011010000000000000000000000000000000000000 
+	Parameter PHI_INC bound to: 32'b00001100110011001100110011001100 
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s01_nco/lut/sin.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s01_nco/rtl/nco.v:67]
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s01_nco/lut/cos.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s01_nco/rtl/nco.v:68]
+INFO: [Synth 8-6155] done synthesizing module 'nco__parameterized0' (3#1) [D:/Backup/Documents/GitHub/fpga-lab/s01_nco/rtl/nco.v:29]
+INFO: [Synth 8-6157] synthesizing module 'mixer' [D:/Backup/Documents/GitHub/fpga-lab/s02_mixer/rtl/mixer.v:63]
+	Parameter IW bound to: 13 - type: integer 
+	Parameter AW bound to: 12 - type: integer 
+	Parameter OW bound to: 14 - type: integer 
+	Parameter SHIFT bound to: 11 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter CONJ bound to: 0 - type: integer 
+	Parameter FULL_W bound to: 25 - type: integer 
+	Parameter SUM_W bound to: 26 - type: integer 
+	Parameter RND_C bound to: 27'sb000000000000000010000000000 
+	Parameter OW_MAX bound to: 27'sb000000000000001111111111111 
+	Parameter OW_MIN bound to: 27'sb111111111111110000000000000 
+INFO: [Synth 8-6155] done synthesizing module 'mixer' (4#1) [D:/Backup/Documents/GitHub/fpga-lab/s02_mixer/rtl/mixer.v:63]
+INFO: [Synth 8-6157] synthesizing module 'interp2' [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/interp2.v:56]
+	Parameter IW bound to: 14 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N bound to: 61 - type: integer 
+	Parameter OW bound to: 15 - type: integer 
+	Parameter SHIFT bound to: 14 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter COEF_FILE bound to: hb_odd.mem - type: string 
+	Parameter K bound to: 30 - type: integer 
+	Parameter PAIRS bound to: 15 - type: integer 
+	Parameter PA_W bound to: 15 - type: integer 
+	Parameter PROD_W bound to: 31 - type: integer 
+	Parameter SUM_W bound to: 36 - type: integer 
+	Parameter FINAL_W bound to: 37 - type: integer 
+	Parameter GROUPS bound to: 4 - type: integer 
+	Parameter GSUM_N bound to: 4 - type: integer 
+	Parameter LATENCY bound to: 4 - type: integer 
+	Parameter RND_SH bound to: 13 - type: integer 
+	Parameter RND_C bound to: 37'sb0000000000000000000000010000000000000 
+	Parameter OW_MAX bound to: 37'sb0000000000000000000000011111111111111 
+	Parameter OW_MIN bound to: 37'sb1111111111111111111111100000000000000 
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s04_resample/lut/hb_odd.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/interp2.v:94]
+INFO: [Synth 8-6155] done synthesizing module 'interp2' (5#1) [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/interp2.v:56]
+INFO: [Synth 8-6155] done synthesizing module 'duc_core' (6#1) [D:/Backup/Documents/GitHub/fpga-lab/s05_duc/rtl/duc_core.v:59]
+INFO: [Synth 8-6157] synthesizing module 'ddc_core' [D:/Backup/Documents/GitHub/fpga-lab/s06_ddc/rtl/ddc_core.v:54]
+	Parameter IW bound to: 15 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N_DEC bound to: 61 - type: integer 
+	Parameter N_FIR bound to: 47 - type: integer 
+	Parameter AW bound to: 12 - type: integer 
+	Parameter PHASE_W bound to: 32 - type: integer 
+	Parameter LUT_AW bound to: 12 - type: integer 
+	Parameter CLK_HZ bound to: 50000000 - type: integer 
+	Parameter FREQ_HZ bound to: 2500000 - type: integer 
+	Parameter OW_DEC bound to: 16 - type: integer 
+	Parameter OW_MIX bound to: 17 - type: integer 
+	Parameter OW_FIR bound to: 18 - type: integer 
+	Parameter OW_OUT bound to: 13 - type: integer 
+	Parameter SHIFT_DEC bound to: 15 - type: integer 
+	Parameter SHIFT_MIX bound to: 11 - type: integer 
+	Parameter SHIFT_FIR bound to: 15 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter LO_DLY bound to: 23 - type: integer 
+	Parameter COEF_FILE_DEC bound to: hb_odd.mem - type: string 
+	Parameter COEF_FILE_FIR bound to: coef.mem - type: string 
+	Parameter OUT_MAX bound to: 18'sb000000111111111111 
+	Parameter OUT_MIN bound to: 18'sb111111000000000000 
+INFO: [Synth 8-6157] synthesizing module 'decim2' [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/decim2.v:43]
+	Parameter IW bound to: 15 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N bound to: 61 - type: integer 
+	Parameter OW bound to: 16 - type: integer 
+	Parameter SHIFT bound to: 15 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter COEF_FILE bound to: hb_odd.mem - type: string 
+	Parameter K bound to: 30 - type: integer 
+	Parameter PAIRS bound to: 15 - type: integer 
+	Parameter TERMS bound to: 16 - type: integer 
+	Parameter PA_W bound to: 16 - type: integer 
+	Parameter PROD_W bound to: 32 - type: integer 
+	Parameter SUM_W bound to: 37 - type: integer 
+	Parameter FINAL_W bound to: 38 - type: integer 
+	Parameter GROUPS bound to: 4 - type: integer 
+	Parameter GSUM_N bound to: 4 - type: integer 
+	Parameter LATENCY bound to: 4 - type: integer 
+	Parameter HALF_COEF bound to: 16'sb0100000000000000 
+	Parameter RND_SH bound to: 14 - type: integer 
+	Parameter RND_C bound to: 38'sb00000000000000000000000100000000000000 
+	Parameter OW_MAX bound to: 38'sb00000000000000000000000111111111111111 
+	Parameter OW_MIN bound to: 38'sb11111111111111111111111000000000000000 
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s04_resample/lut/hb_odd.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/decim2.v:78]
+INFO: [Synth 8-6155] done synthesizing module 'decim2' (7#1) [D:/Backup/Documents/GitHub/fpga-lab/s04_resample/rtl/decim2.v:43]
+INFO: [Synth 8-6157] synthesizing module 'mixer__parameterized0' [D:/Backup/Documents/GitHub/fpga-lab/s02_mixer/rtl/mixer.v:63]
+	Parameter IW bound to: 16 - type: integer 
+	Parameter AW bound to: 12 - type: integer 
+	Parameter OW bound to: 17 - type: integer 
+	Parameter SHIFT bound to: 11 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter CONJ bound to: 1 - type: integer 
+	Parameter FULL_W bound to: 28 - type: integer 
+	Parameter SUM_W bound to: 29 - type: integer 
+	Parameter RND_C bound to: 30'sb000000000000000000010000000000 
+	Parameter OW_MAX bound to: 30'sb000000000000001111111111111111 
+	Parameter OW_MIN bound to: 30'sb111111111111110000000000000000 
+INFO: [Synth 8-6155] done synthesizing module 'mixer__parameterized0' (7#1) [D:/Backup/Documents/GitHub/fpga-lab/s02_mixer/rtl/mixer.v:63]
+INFO: [Synth 8-6157] synthesizing module 'fir__parameterized0' [D:/Backup/Documents/GitHub/fpga-lab/s03_fir/rtl/fir.v:82]
+	Parameter IW bound to: 17 - type: integer 
+	Parameter CW bound to: 16 - type: integer 
+	Parameter N bound to: 47 - type: integer 
+	Parameter OW bound to: 18 - type: integer 
+	Parameter SHIFT bound to: 15 - type: integer 
+	Parameter ROUND bound to: 1 - type: integer 
+	Parameter COEF_FILE bound to: coef.mem - type: string 
+	Parameter HALF bound to: 23 - type: integer 
+	Parameter NP bound to: 24 - type: integer 
+	Parameter PA_W bound to: 18 - type: integer 
+	Parameter PROD_W bound to: 34 - type: integer 
+	Parameter SUM_W bound to: 40 - type: integer 
+	Parameter FINAL_W bound to: 41 - type: integer 
+	Parameter GROUPS bound to: 4 - type: integer 
+	Parameter GSUM_N bound to: 6 - type: integer 
+	Parameter LATENCY bound to: 4 - type: integer 
+	Parameter RND_SH bound to: 14 - type: integer 
+	Parameter RND_C bound to: 41'sb00000000000000000000000000100000000000000 
+	Parameter OW_MAX bound to: 41'sb00000000000000000000000011111111111111111 
+	Parameter OW_MIN bound to: 41'sb11111111111111111111111100000000000000000 
+INFO: [Synth 8-3876] $readmem data file 'D:/Backup/Documents/GitHub/fpga-lab/s03_fir/lut/coef.mem' is read successfully [D:/Backup/Documents/GitHub/fpga-lab/s03_fir/rtl/fir.v:117]
+INFO: [Synth 8-6155] done synthesizing module 'fir__parameterized0' (7#1) [D:/Backup/Documents/GitHub/fpga-lab/s03_fir/rtl/fir.v:82]
+INFO: [Synth 8-6155] done synthesizing module 'ddc_core' (8#1) [D:/Backup/Documents/GitHub/fpga-lab/s06_ddc/rtl/ddc_core.v:54]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'u_duc'. This will prevent further optimization [D:/Backup/Documents/GitHub/fpga-lab/s06_ddc/rtl/ddc_top.v:103]
+INFO: [Synth 8-6071] Mark debug on the nets applies keep_hierarchy on instance 'u_ddc'. This will prevent further optimization [D:/Backup/Documents/GitHub/fpga-lab/s06_ddc/rtl/ddc_top.v:120]
+INFO: [Synth 8-6155] done synthesizing module 'ddc_top' (9#1) [D:/Backup/Documents/GitHub/fpga-lab/s06_ddc/rtl/ddc_top.v:32]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 1017.984 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 1017.984 ; gain = 0.000
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 1017.984 ; gain = 0.000
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.165 . Memory (MB): peak = 1017.984 ; gain = 0.000
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [D:/Backup/Documents/vivado_projects/s06_ddc/s06_ddc.srcs/constrs_2/ddc.xdc]
+Finished Parsing XDC File [D:/Backup/Documents/vivado_projects/s06_ddc/s06_ddc.srcs/constrs_2/ddc.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [D:/Backup/Documents/vivado_projects/s06_ddc/s06_ddc.srcs/constrs_2/ddc.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/ddc_top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/ddc_top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 1032.129 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.086 . Memory (MB): peak = 1032.129 ; gain = 0.000
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 1032.129 ; gain = 14.145
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a100tfgg484-2
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 1032.129 ; gain = 14.145
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 1032.129 ; gain = 14.145
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 1032.129 ; gain = 14.145
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   41 Bit       Adders := 2     
+	   6 Input   40 Bit       Adders := 8     
+	   4 Input   40 Bit       Adders := 2     
+	   2 Input   38 Bit       Adders := 2     
+	   2 Input   37 Bit       Adders := 2     
+	   4 Input   37 Bit       Adders := 10    
+	   2 Input   36 Bit       Adders := 2     
+	   4 Input   36 Bit       Adders := 8     
+	   3 Input   36 Bit       Adders := 2     
+	   6 Input   35 Bit       Adders := 8     
+	   4 Input   35 Bit       Adders := 2     
+	   2 Input   30 Bit       Adders := 2     
+	   2 Input   27 Bit       Adders := 2     
+	   2 Input   18 Bit       Adders := 42    
+	   2 Input   16 Bit       Adders := 30    
+	   2 Input   15 Bit       Adders := 32    
+	   2 Input   13 Bit       Adders := 44    
++---Registers : 
+	               40 Bit    Registers := 8     
+	               37 Bit    Registers := 8     
+	               36 Bit    Registers := 8     
+	               35 Bit    Registers := 8     
+	               34 Bit    Registers := 46    
+	               32 Bit    Registers := 32    
+	               31 Bit    Registers := 30    
+	               29 Bit    Registers := 46    
+	               18 Bit    Registers := 2     
+	               17 Bit    Registers := 96    
+	               16 Bit    Registers := 2     
+	               15 Bit    Registers := 98    
+	               14 Bit    Registers := 62    
+	               13 Bit    Registers := 4     
+	               12 Bit    Registers := 154   
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 1     
++---ROMs : 
+	                    ROMs := 6     
++---Muxes : 
+	   2 Input   18 Bit        Muxes := 4     
+	   2 Input   17 Bit        Muxes := 4     
+	   2 Input   16 Bit        Muxes := 4     
+	   2 Input   15 Bit        Muxes := 10    
+	   2 Input   14 Bit        Muxes := 4     
+	   2 Input   13 Bit        Muxes := 10    
+	   2 Input    1 Bit        Muxes := 2     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 240 (col length:80)
+BRAMs: 270 (col length: RAMB18 80 RAMB36 40)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x69).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0xe4).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0xa9).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3ff92).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fe5c).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x3ffd5).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[14], operation Mode is: A*(B:0x289).
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[15], operation Mode is: A*(B:0x3a2).
+DSP Report: operator prod[15] is absorbed into DSP prod[15].
+DSP Report: Generating DSP prod[16], operation Mode is: A*(B:0x172).
+DSP Report: operator prod[16] is absorbed into DSP prod[16].
+DSP Report: Generating DSP prod[17], operation Mode is: A*(B:0x3fc99).
+DSP Report: operator prod[17] is absorbed into DSP prod[17].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x3fe4b).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[19], operation Mode is: A*(B:0x3fa6d).
+DSP Report: operator prod[19] is absorbed into DSP prod[19].
+DSP Report: Generating DSP prod[20], operation Mode is: A*(B:0x407).
+DSP Report: operator prod[20] is absorbed into DSP prod[20].
+DSP Report: Generating DSP prod[21], operation Mode is: (A:0x1301)*B.
+DSP Report: operator prod[21] is absorbed into DSP prod[21].
+DSP Report: Generating DSP prod[22], operation Mode is: (A:0x20c1)*B.
+DSP Report: operator prod[22] is absorbed into DSP prod[22].
+DSP Report: Generating DSP prod[23], operation Mode is: (A:0x2652)*B.
+DSP Report: operator prod[23] is absorbed into DSP prod[23].
+DSP Report: Generating DSP prod[18], operation Mode is: A*(B:0x3f8b5).
+DSP Report: operator prod[18] is absorbed into DSP prod[18].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x26).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x27).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x3ffbf).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff9b).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x69).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0xe4).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0xa9).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3ff92).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fe5c).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x3ffd5).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[14], operation Mode is: A*(B:0x289).
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[15], operation Mode is: A*(B:0x3a2).
+DSP Report: operator prod[15] is absorbed into DSP prod[15].
+DSP Report: Generating DSP prod[16], operation Mode is: A*(B:0x172).
+DSP Report: operator prod[16] is absorbed into DSP prod[16].
+DSP Report: Generating DSP prod[17], operation Mode is: A*(B:0x3fc99).
+DSP Report: operator prod[17] is absorbed into DSP prod[17].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x3fe4b).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[19], operation Mode is: A*(B:0x3fa6d).
+DSP Report: operator prod[19] is absorbed into DSP prod[19].
+DSP Report: Generating DSP prod[20], operation Mode is: A*(B:0x407).
+DSP Report: operator prod[20] is absorbed into DSP prod[20].
+DSP Report: Generating DSP prod[21], operation Mode is: (A:0x1301)*B.
+DSP Report: operator prod[21] is absorbed into DSP prod[21].
+DSP Report: Generating DSP prod[22], operation Mode is: (A:0x20c1)*B.
+DSP Report: operator prod[22] is absorbed into DSP prod[22].
+DSP Report: Generating DSP prod[23], operation Mode is: (A:0x2652)*B.
+DSP Report: operator prod[23] is absorbed into DSP prod[23].
+DSP Report: Generating DSP prod[18], operation Mode is: A*(B:0x3f8b5).
+DSP Report: operator prod[18] is absorbed into DSP prod[18].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x26).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x27).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x3ffbf).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff9b).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff3f).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x110).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x3fe89).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x86).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0x3fd50).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3aa).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fae0).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0x1fd).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[13], operation Mode is: A*(B:0x3f2bf).
+DSP Report: operator prod[13] is absorbed into DSP prod[13].
+DSP Report: Generating DSP prod[14], operation Mode is: A*(B:0x2893).
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x7a2).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x3ffd8).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x3b).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[3], operation Mode is: A*(B:0x3ffa6).
+DSP Report: operator prod[3] is absorbed into DSP prod[3].
+DSP Report: Generating DSP prod[0], operation Mode is: A*(B:0x1e).
+DSP Report: operator prod[0] is absorbed into DSP prod[0].
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff3f).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x110).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x3fe89).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x86).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0x3fd50).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3aa).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fae0).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0x1fd).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[13], operation Mode is: A*(B:0x3f2bf).
+DSP Report: operator prod[13] is absorbed into DSP prod[13].
+DSP Report: Generating DSP prod[14], operation Mode is: A*(B:0x2893).
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x7a2).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x3ffd8).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x3b).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[3], operation Mode is: A*(B:0x3ffa6).
+DSP Report: operator prod[3] is absorbed into DSP prod[3].
+DSP Report: Generating DSP prod[0], operation Mode is: A*(B:0x1e).
+DSP Report: operator prod[0] is absorbed into DSP prod[0].
+DSP Report: Generating DSP u_mixer/p_ic, operation Mode is: A*B.
+DSP Report: operator u_mixer/p_ic is absorbed into DSP u_mixer/p_ic.
+DSP Report: Generating DSP u_mixer/i_sum, operation Mode is: PCIN-A*B.
+DSP Report: operator u_mixer/i_sum is absorbed into DSP u_mixer/i_sum.
+DSP Report: operator u_mixer/p_qs is absorbed into DSP u_mixer/i_sum.
+DSP Report: Generating DSP u_mixer/p_qc, operation Mode is: A*B.
+DSP Report: operator u_mixer/p_qc is absorbed into DSP u_mixer/p_qc.
+DSP Report: Generating DSP u_mixer/q_sum, operation Mode is: PCIN+A*B.
+DSP Report: operator u_mixer/q_sum is absorbed into DSP u_mixer/q_sum.
+DSP Report: operator u_mixer/p_is is absorbed into DSP u_mixer/q_sum.
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff3f).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x110).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x3fe89).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x86).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0x3fd50).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3aa).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fae0).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0x1fd).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[13], operation Mode is: A*(B:0x3f2bf).
+DSP Report: operator prod[13] is absorbed into DSP prod[13].
+DSP Report: Generating DSP prod[14], operation Mode is: A*(B:0x2893).
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x7a2).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x3ffd8).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x3b).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[3], operation Mode is: A*(B:0x3ffa6).
+DSP Report: operator prod[3] is absorbed into DSP prod[3].
+DSP Report: Generating DSP prod[0], operation Mode is: A*(B:0x1e).
+DSP Report: operator prod[0] is absorbed into DSP prod[0].
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff3f).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x110).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x3fe89).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x86).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0x3fd50).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3aa).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fae0).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0x1fd).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[13], operation Mode is: A*(B:0x3f2bf).
+DSP Report: operator prod[13] is absorbed into DSP prod[13].
+DSP Report: Generating DSP prod[14], operation Mode is: A*(B:0x2893).
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x7a2).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x3ffd8).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x3b).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[3], operation Mode is: A*(B:0x3ffa6).
+DSP Report: operator prod[3] is absorbed into DSP prod[3].
+DSP Report: Generating DSP prod[0], operation Mode is: A*(B:0x1e).
+DSP Report: operator prod[0] is absorbed into DSP prod[0].
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x69).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0xe4).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0xa9).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3ff92).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fe5c).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x3ffd5).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[14], operation Mode is: A*(B:0x289).
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[15], operation Mode is: A*(B:0x3a2).
+DSP Report: operator prod[15] is absorbed into DSP prod[15].
+DSP Report: Generating DSP prod[16], operation Mode is: A*(B:0x172).
+DSP Report: operator prod[16] is absorbed into DSP prod[16].
+DSP Report: Generating DSP prod[17], operation Mode is: A*(B:0x3fc99).
+DSP Report: operator prod[17] is absorbed into DSP prod[17].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x3fe4b).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[19], operation Mode is: A*(B:0x3fa6d).
+DSP Report: operator prod[19] is absorbed into DSP prod[19].
+DSP Report: Generating DSP prod[20], operation Mode is: A*(B:0x407).
+DSP Report: operator prod[20] is absorbed into DSP prod[20].
+DSP Report: Generating DSP prod[21], operation Mode is: A*(B:0x1301).
+DSP Report: operator prod[21] is absorbed into DSP prod[21].
+DSP Report: Generating DSP prod[22], operation Mode is: A*(B:0x20c1).
+DSP Report: operator prod[22] is absorbed into DSP prod[22].
+DSP Report: Generating DSP prod[23], operation Mode is: A*(B:0x2652).
+DSP Report: operator prod[23] is absorbed into DSP prod[23].
+DSP Report: Generating DSP prod[18], operation Mode is: A*(B:0x3f8b5).
+DSP Report: operator prod[18] is absorbed into DSP prod[18].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x26).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x27).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x3ffbf).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff9b).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP prod[7], operation Mode is: A*(B:0x69).
+DSP Report: operator prod[7] is absorbed into DSP prod[7].
+DSP Report: Generating DSP prod[8], operation Mode is: A*(B:0xe4).
+DSP Report: operator prod[8] is absorbed into DSP prod[8].
+DSP Report: Generating DSP prod[9], operation Mode is: A*(B:0xa9).
+DSP Report: operator prod[9] is absorbed into DSP prod[9].
+DSP Report: Generating DSP prod[10], operation Mode is: A*(B:0x3ff92).
+DSP Report: operator prod[10] is absorbed into DSP prod[10].
+DSP Report: Generating DSP prod[11], operation Mode is: A*(B:0x3fe5c).
+DSP Report: operator prod[11] is absorbed into DSP prod[11].
+DSP Report: Generating DSP prod[6], operation Mode is: A*(B:0x3ffd5).
+DSP Report: operator prod[6] is absorbed into DSP prod[6].
+DSP Report: Generating DSP prod[14], operation Mode is: A*(B:0x289).
+DSP Report: operator prod[14] is absorbed into DSP prod[14].
+DSP Report: Generating DSP prod[15], operation Mode is: A*(B:0x3a2).
+DSP Report: operator prod[15] is absorbed into DSP prod[15].
+DSP Report: Generating DSP prod[16], operation Mode is: A*(B:0x172).
+DSP Report: operator prod[16] is absorbed into DSP prod[16].
+DSP Report: Generating DSP prod[17], operation Mode is: A*(B:0x3fc99).
+DSP Report: operator prod[17] is absorbed into DSP prod[17].
+DSP Report: Generating DSP prod[12], operation Mode is: A*(B:0x3fe4b).
+DSP Report: operator prod[12] is absorbed into DSP prod[12].
+DSP Report: Generating DSP prod[19], operation Mode is: A*(B:0x3fa6d).
+DSP Report: operator prod[19] is absorbed into DSP prod[19].
+DSP Report: Generating DSP prod[20], operation Mode is: A*(B:0x407).
+DSP Report: operator prod[20] is absorbed into DSP prod[20].
+DSP Report: Generating DSP prod[21], operation Mode is: A*(B:0x1301).
+DSP Report: operator prod[21] is absorbed into DSP prod[21].
+DSP Report: Generating DSP prod[22], operation Mode is: A*(B:0x20c1).
+DSP Report: operator prod[22] is absorbed into DSP prod[22].
+DSP Report: Generating DSP prod[23], operation Mode is: A*(B:0x2652).
+DSP Report: operator prod[23] is absorbed into DSP prod[23].
+DSP Report: Generating DSP prod[18], operation Mode is: A*(B:0x3f8b5).
+DSP Report: operator prod[18] is absorbed into DSP prod[18].
+DSP Report: Generating DSP prod[1], operation Mode is: A*(B:0x26).
+DSP Report: operator prod[1] is absorbed into DSP prod[1].
+DSP Report: Generating DSP prod[2], operation Mode is: A*(B:0x27).
+DSP Report: operator prod[2] is absorbed into DSP prod[2].
+DSP Report: Generating DSP prod[4], operation Mode is: A*(B:0x3ffbf).
+DSP Report: operator prod[4] is absorbed into DSP prod[4].
+DSP Report: Generating DSP prod[5], operation Mode is: A*(B:0x3ff9b).
+DSP Report: operator prod[5] is absorbed into DSP prod[5].
+DSP Report: Generating DSP u_mixer/p_ic, operation Mode is: A*B.
+DSP Report: operator u_mixer/p_ic is absorbed into DSP u_mixer/p_ic.
+DSP Report: Generating DSP u_mixer/i_sum, operation Mode is: PCIN+A*B.
+DSP Report: operator u_mixer/i_sum is absorbed into DSP u_mixer/i_sum.
+DSP Report: operator u_mixer/p_qs is absorbed into DSP u_mixer/i_sum.
+DSP Report: Generating DSP u_mixer/p_qc, operation Mode is: A*B.
+DSP Report: operator u_mixer/p_qc is absorbed into DSP u_mixer/p_qc.
+DSP Report: Generating DSP u_mixer/q_sum, operation Mode is: PCIN-A*B.
+DSP Report: operator u_mixer/q_sum is absorbed into DSP u_mixer/q_sum.
+DSP Report: operator u_mixer/p_is is absorbed into DSP u_mixer/q_sum.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:46 ; elapsed = 00:00:46 . Memory (MB): peak = 1032.129 ; gain = 14.145
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+ROM: Preliminary Mapping	Report
++------------+-----------------------+---------------+----------------+
+|Module Name | RTL Object            | Depth x Width | Implemented As | 
++------------+-----------------------+---------------+----------------+
+|duc_core    | u_nco/fsin_o_reg      | 4096x12       | Block RAM      | 
+|duc_core    | u_nco/fcos_o_reg      | 4096x12       | Block RAM      | 
+|ddc_core    | u_nco/fsin_o_reg      | 4096x12       | Block RAM      | 
+|ddc_core    | u_nco/fcos_o_reg      | 4096x12       | Block RAM      | 
+|ddc_top     | u_tone_nco/fsin_o_reg | 4096x12       | Block RAM      | 
+|ddc_top     | u_tone_nco/fcos_o_reg | 4096x12       | Block RAM      | 
++------------+-----------------------+---------------+----------------+
+
+
+DSP: Preliminary Mapping	Report (see note below)
++------------+---------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name | DSP Mapping   | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++------------+---------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|fir         | A*(B:0x69)    | 13     | 8      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0xe4)    | 13     | 9      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0xa9)    | 13     | 9      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ff92) | 13     | 8      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fe5c) | 13     | 10     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ffd5) | 13     | 7      | -      | -      | 20     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x289)   | 13     | 11     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3a2)   | 13     | 11     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x172)   | 13     | 10     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fc99) | 13     | 11     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fe4b) | 13     | 10     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fa6d) | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x407)   | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | (A:0x1301)*B  | 13     | 14     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | (A:0x20c1)*B  | 13     | 15     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | (A:0x2652)*B  | 12     | 15     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3f8b5) | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x26)    | 13     | 7      | -      | -      | 20     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x27)    | 13     | 7      | -      | -      | 20     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ffbf) | 13     | 8      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ff9b) | 13     | 8      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x69)    | 13     | 8      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0xe4)    | 13     | 9      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0xa9)    | 13     | 9      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ff92) | 13     | 8      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fe5c) | 13     | 10     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ffd5) | 13     | 7      | -      | -      | 20     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x289)   | 13     | 11     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3a2)   | 13     | 11     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x172)   | 13     | 10     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fc99) | 13     | 11     | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fe4b) | 13     | 10     | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fa6d) | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x407)   | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | (A:0x1301)*B  | 13     | 14     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | (A:0x20c1)*B  | 13     | 15     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | (A:0x2652)*B  | 12     | 15     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3f8b5) | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x26)    | 13     | 7      | -      | -      | 20     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x27)    | 13     | 7      | -      | -      | 20     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ffbf) | 13     | 8      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ff9b) | 13     | 8      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3ff3f) | 15     | 9      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x110)   | 15     | 10     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3fe89) | 15     | 10     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x86)    | 15     | 9      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3fd50) | 15     | 11     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3aa)   | 15     | 11     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3fae0) | 15     | 12     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x1fd)   | 15     | 10     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3f2bf) | 15     | 13     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x2893)  | 15     | 15     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x7a2)   | 15     | 12     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3ffd8) | 15     | 7      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3b)    | 15     | 7      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3ffa6) | 15     | 8      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x1e)    | 15     | 6      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3ff3f) | 15     | 9      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x110)   | 15     | 10     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3fe89) | 15     | 10     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x86)    | 15     | 9      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3fd50) | 15     | 11     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3aa)   | 15     | 11     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3fae0) | 15     | 12     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x1fd)   | 15     | 10     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3f2bf) | 15     | 13     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x2893)  | 15     | 15     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x7a2)   | 15     | 12     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3ffd8) | 15     | 7      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3b)    | 15     | 7      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x3ffa6) | 15     | 8      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|interp2     | A*(B:0x1e)    | 15     | 6      | -      | -      | 21     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|mixer       | A*B           | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|mixer       | PCIN-A*B      | 13     | 12     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|mixer       | A*B           | 13     | 12     | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|mixer       | PCIN+A*B      | 13     | 12     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3ff3f) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x110)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3fe89) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x86)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3fd50) | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3aa)   | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3fae0) | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x1fd)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3f2bf) | 16     | 13     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x2893)  | 16     | 15     | -      | -      | 31     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x7a2)   | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3ffd8) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3b)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3ffa6) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x1e)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3ff3f) | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x110)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3fe89) | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x86)    | 16     | 9      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3fd50) | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3aa)   | 16     | 11     | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3fae0) | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x1fd)   | 16     | 10     | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3f2bf) | 16     | 13     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x2893)  | 16     | 15     | -      | -      | 31     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x7a2)   | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3ffd8) | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3b)    | 16     | 7      | -      | -      | 23     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x3ffa6) | 16     | 8      | -      | -      | 24     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|decim2      | A*(B:0x1e)    | 16     | 6      | -      | -      | 22     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x69)    | 18     | 8      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0xe4)    | 18     | 9      | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0xa9)    | 18     | 9      | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ff92) | 18     | 8      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fe5c) | 18     | 10     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ffd5) | 18     | 7      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x289)   | 18     | 11     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3a2)   | 18     | 11     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x172)   | 18     | 10     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fc99) | 18     | 11     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fe4b) | 18     | 10     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fa6d) | 18     | 12     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x407)   | 18     | 12     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x1301)  | 18     | 14     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x20c1)  | 18     | 15     | -      | -      | 33     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x2652)  | 17     | 15     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3f8b5) | 18     | 12     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x26)    | 18     | 7      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x27)    | 18     | 7      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ffbf) | 18     | 8      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ff9b) | 18     | 8      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x69)    | 18     | 8      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0xe4)    | 18     | 9      | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0xa9)    | 18     | 9      | -      | -      | 27     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ff92) | 18     | 8      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fe5c) | 18     | 10     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ffd5) | 18     | 7      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x289)   | 18     | 11     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3a2)   | 18     | 11     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x172)   | 18     | 10     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fc99) | 18     | 11     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fe4b) | 18     | 10     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3fa6d) | 18     | 12     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x407)   | 18     | 12     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x1301)  | 18     | 14     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x20c1)  | 18     | 15     | -      | -      | 33     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x2652)  | 17     | 15     | -      | -      | 32     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3f8b5) | 18     | 12     | -      | -      | 30     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x26)    | 18     | 7      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x27)    | 18     | 7      | -      | -      | 25     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ffbf) | 18     | 8      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|fir         | A*(B:0x3ff9b) | 18     | 8      | -      | -      | 26     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|mixer       | A*B           | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|mixer       | PCIN+A*B      | 16     | 12     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|mixer       | A*B           | 16     | 12     | -      | -      | 28     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|mixer       | PCIN-A*B      | 16     | 12     | -      | -      | 29     | 0    | 0    | -    | -    | -     | 0    | 0    | 
++------------+---------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:58 ; elapsed = 00:00:58 . Memory (MB): peak = 1076.562 ; gain = 58.578
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:01:06 ; elapsed = 00:01:06 . Memory (MB): peak = 1139.562 ; gain = 121.578
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-7052] The timing for the instance u_duc/u_nco/fsin_o_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_duc/u_nco/fsin_o_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_duc/u_nco/fcos_o_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_duc/u_nco/fcos_o_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_ddc/u_nco/fsin_o_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_ddc/u_nco/fsin_o_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_ddc/u_nco/fcos_o_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_ddc/u_nco/fcos_o_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_tone_nco/fsin_o_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_tone_nco/fsin_o_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_tone_nco/fcos_o_reg_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance u_tone_nco/fcos_o_reg_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:01:16 ; elapsed = 00:01:16 . Memory (MB): peak = 1273.141 ; gain = 255.156
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:01:21 ; elapsed = 00:01:21 . Memory (MB): peak = 1288.469 ; gain = 270.484
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:01:21 ; elapsed = 00:01:21 . Memory (MB): peak = 1288.469 ; gain = 270.484
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:01:23 ; elapsed = 00:01:23 . Memory (MB): peak = 1288.469 ; gain = 270.484
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:01:23 ; elapsed = 00:01:23 . Memory (MB): peak = 1288.469 ; gain = 270.484
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:01:24 ; elapsed = 00:01:24 . Memory (MB): peak = 1288.469 ; gain = 270.484
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:01:24 ; elapsed = 00:01:24 . Memory (MB): peak = 1288.469 ; gain = 270.484
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                     | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|duc_core    | g_lo_dly.sin_dly_reg[3][11]  | 4      | 12    | YES          | NO                 | YES               | 12     | 0       | 
+|duc_core    | g_lo_dly.cos_dly_reg[3][11]  | 4      | 12    | YES          | NO                 | YES               | 12     | 0       | 
+|ddc_core    | u_dec_i/p_reg_reg[15][31]    | 17     | 15    | YES          | NO                 | YES               | 15     | 0       | 
+|ddc_core    | u_dec_q/p_reg_reg[15][31]    | 17     | 15    | YES          | NO                 | YES               | 15     | 0       | 
+|ddc_core    | g_lo_dly.sin_dly_reg[22][11] | 23     | 12    | YES          | NO                 | YES               | 0      | 12      | 
+|ddc_core    | g_lo_dly.cos_dly_reg[22][11] | 23     | 12    | YES          | NO                 | YES               | 0      | 12      | 
++------------+------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+---------+------+
+|      |Cell     |Count |
++------+---------+------+
+|1     |BUFG     |     1|
+|2     |CARRY4   |  1357|
+|3     |DSP48E1  |   152|
+|5     |LUT1     |   434|
+|6     |LUT2     |  3121|
+|7     |LUT3     |   689|
+|8     |LUT4     |   649|
+|9     |LUT5     |  1720|
+|10    |LUT6     |  2550|
+|11    |RAMB18E1 |     6|
+|13    |RAMB36E1 |     6|
+|15    |SRL16E   |    54|
+|16    |SRLC32E  |    24|
+|17    |FDCE     |  6280|
+|18    |FDRE     |    78|
+|19    |IBUF     |     2|
+|20    |OBUF     |     4|
++------+---------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:01:24 ; elapsed = 00:01:24 . Memory (MB): peak = 1288.469 ; gain = 270.484
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:01:12 ; elapsed = 00:01:20 . Memory (MB): peak = 1288.469 ; gain = 256.340
+Synthesis Optimization Complete : Time (s): cpu = 00:01:24 ; elapsed = 00:01:24 . Memory (MB): peak = 1288.469 ; gain = 270.484
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.205 . Memory (MB): peak = 1288.469 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 1521 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 1288.469 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+61 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:01:34 ; elapsed = 00:01:35 . Memory (MB): peak = 1288.469 ; gain = 288.020
+INFO: [Common 17-600] The following parameters have non-default value.
+tcl.collectionResultDisplayLimit
+INFO: [Common 17-1381] The checkpoint 'D:/Backup/Documents/vivado_projects/s06_ddc/s06_ddc.runs/synth_1/ddc_top.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_utilization -file ddc_top_utilization_synth.rpt -pb ddc_top_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Tue Oct 20 18:06:16 2026...
