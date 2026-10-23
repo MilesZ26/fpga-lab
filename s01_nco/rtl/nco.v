@@ -30,8 +30,8 @@ module nco #(
     parameter integer CLK_HZ  = 50_000_000,   // 输入时钟频率
     parameter integer FREQ_HZ = 1,            // 输出频率
     parameter integer PHASE_W = 32,           // 相位累加器位宽
-    parameter integer LUT_AW  = 12,           // 查表地址位宽（表深 = 2**LUT_AW）
-    parameter integer AW      = 12            // 输出幅度位宽（补码）
+    parameter integer LUT_AW  = 12,           // LUT address width, 查表地址位宽（表深 = 2**LUT_AW）
+    parameter integer AW      = 12            // amplitude width, 输出幅度位宽（补码）
 )(
     input  wire                 clk,       // 时钟输入
     input  wire                 rst_n,     // 异步复位输入，低有效
@@ -64,20 +64,21 @@ module nco #(
     reg signed [AW-1:0] sin_rom [0:DEPTH-1];
     reg signed [AW-1:0] cos_rom [0:DEPTH-1];
     initial begin
-        $readmemh({`NCO_LUTDIR, "sin.mem"}, sin_rom);
+        $readmemh({`NCO_LUTDIR, "sin.mem"}, sin_rom); //拼接地址和文件名，读进寄存器
         $readmemh({`NCO_LUTDIR, "cos.mem"}, cos_rom);
     end
 
+    // FTW = FREQ_HZ / CLK_HZ * 2**PHASE_W，先用移位做乘法
     localparam [63:0] PHI_INC_64 = FREQ_HZ << PHASE_W;    // 64 位里移位，编译期算
-    localparam [31:0] PHI_INC    = PHI_INC_64 / CLK_HZ;   // 截回 32 位，编译期算
+    localparam [31:0] PHI_INC    = PHI_INC_64 / CLK_HZ;   // 截回 32 位，编译期算，不用综合除法
 
     // ── 相位累加器 ──
     reg [PHASE_W-1:0] phase_acc;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
-            phase_acc <= {PHASE_W{1'b0}};
+            phase_acc <= {PHASE_W{1'b0}}; //累加器复位
         else
-            phase_acc <= phase_acc + PHI_INC;
+            phase_acc <= phase_acc + PHI_INC; //累加器递进
     end
 
     // ── 查表输出 ──
@@ -86,10 +87,10 @@ module nco #(
     wire [LUT_AW-1:0] addr = phase_acc[PHASE_W-1 : PHASE_W-LUT_AW];
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            fsin_o <= {AW{1'b0}};
+            fsin_o <= {AW{1'b0}}; //输出寄存器复位
             fcos_o <= {AW{1'b0}};
         end else begin
-            fsin_o <= sin_rom[addr];
+            fsin_o <= sin_rom[addr]; //输出寄存器读地址，比相位累加器晚一拍
             fcos_o <= cos_rom[addr];
         end
     end

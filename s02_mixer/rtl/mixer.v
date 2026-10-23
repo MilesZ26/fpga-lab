@@ -91,10 +91,10 @@ module mixer #(
     wire signed [FULL_W-1:0] p_qc = q_in * cos_in;   // Q * cos
 
     // 每个乘积先**符号扩展 1 位**，再加减 —— 否则极端值相加减会溢出变号。
-    wire signed [SUM_W-1:0] ic_x = {p_ic[FULL_W-1], p_ic};
-    wire signed [SUM_W-1:0] qs_x = {p_qs[FULL_W-1], p_qs};
-    wire signed [SUM_W-1:0] is_x = {p_is[FULL_W-1], p_is};
-    wire signed [SUM_W-1:0] qc_x = {p_qc[FULL_W-1], p_qc};
+    wire signed [SUM_W-1:0] ic_x = {p_ic[FULL_W-1], p_ic}; //扩展后的 I 路和 cos 乘积
+    wire signed [SUM_W-1:0] qs_x = {p_qs[FULL_W-1], p_qs}; //扩展后的 Q 路和 sin 乘积
+    wire signed [SUM_W-1:0] is_x = {p_is[FULL_W-1], p_is}; //扩展后的 I 路和 sin 乘积
+    wire signed [SUM_W-1:0] qc_x = {p_qc[FULL_W-1], p_qc}; //扩展后的 Q 路和 cos 乘积
 
     // 乘 e^{+jphi} 还是 e^{-jphi}：**带 j 的那两项（q*sin 和 i*sin）符号要一起翻**。
     //   CONJ=0：乘 e^{+jphi} → i 路是 -q*sin，q 路是 +i*sin
@@ -104,8 +104,8 @@ module mixer #(
     //     这正是"自己证明自己"的经典失败方式；最后是一条手算的性质断言
     //     （cos=0,sin=64,i=q=64 → i_out 应该是 +64）把它揪出来的。）
 
-    wire signed [SUM_W-1:0] qs_term = (CONJ != 0) ?  qs_x : -qs_x;
-    wire signed [SUM_W-1:0] is_term = (CONJ != 0) ? -is_x :  is_x;
+    wire signed [SUM_W-1:0] qs_term = (CONJ != 0) ?  qs_x : -qs_x; //给第二项加正确的符号，上变频 I 路是 ic-qs， 下变频 I 路是 ic+qs，判断语句CONJ != 0 时是下变频，qs_term = +qs_x；CONJ=0 时是上变频，qs_term = -qs_x
+    wire signed [SUM_W-1:0] is_term = (CONJ != 0) ? -is_x :  is_x; //给第二项加正确的符号，上变频 Q 路是 qc+is， 下变频 Q 路是 qc-is
 
     wire signed [SUM_W-1:0] i_sum = ic_x + qs_term;   // i*cos ∓ q*sin
     wire signed [SUM_W-1:0] q_sum = qc_x + is_term;   // q*cos ± i*sin
@@ -127,7 +127,7 @@ module mixer #(
     wire signed [SUM_W:0] i_sh = i_rnd >>> SHIFT;
     wire signed [SUM_W:0] q_sh = q_rnd >>> SHIFT;
 
-    // ── 饱和到 OW 位（不回绕）───────────────────────────────────
+    // ── 饱和到 OW 位（不回绕）, 用函数实现───────────────────────────────────
     localparam signed [SUM_W:0] OW_MAX = (64'sd1 <<< (OW-1)) - 1;   // 2^(OW-1)-1
     localparam signed [SUM_W:0] OW_MIN = -(64'sd1 <<< (OW-1));      // -2^(OW-1)
 
@@ -149,7 +149,7 @@ module mixer #(
             i_out <= {OW{1'b0}};
             q_out <= {OW{1'b0}};
         end else begin
-            i_out <= sat_ow(i_sh);
+            i_out <= sat_ow(i_sh); //两路都用饱和函数的返回值
             q_out <= sat_ow(q_sh);
         end
     end

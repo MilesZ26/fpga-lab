@@ -54,7 +54,7 @@
 module mixer_top #(
     parameter integer CLK_HZ  = 50_000_000,   // 板级时钟（和 XDC 的 create_clock 必须一致）
     parameter integer FREQ_IN = 250_000,      // "输入信号"频率（实验台上假冒的基带单音）
-    parameter integer FREQ_LO = 200_000,      // 本振频率
+    parameter integer FREQ_LO = 200_000,      // local oscillator, 本振频率
     parameter integer PHASE_W = 32,           // NCO 相位累加器位宽
     parameter integer LUT_AW  = 12,           // NCO 查表地址位宽（必须和 lut/*.mem 一致）
     parameter integer AW      = 12,           // NCO 输出幅度位宽 = 本振位宽（必须和表一致）

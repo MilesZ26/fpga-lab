@@ -33,6 +33,6 @@ module reset_sync (
             sync <= {sync[0], 1'b1};    // 同步释放：先移入 1，两拍后输出变高
     end
 
-    assign rst_n = sync[1];
+    assign rst_n = sync[1]; // 输出信号是 sync 的高位，在arst_n变1后的第一个时钟沿还是0，第二个时钟沿变高
 
 endmodule

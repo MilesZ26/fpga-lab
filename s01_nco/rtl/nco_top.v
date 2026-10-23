@@ -84,6 +84,6 @@ module nco_top #(
     // ── LED ──
     // 位宽都跟着 AW 走，换幅度位宽时这里不用改。
     assign led[0]   = fsin_o[AW-1];        // 符号位：半周期翻转
-    assign led[3:1] = fsin_o[AW-2 -: 3];   // 幅值高 3 位：二进制斜坡
+    assign led[3:1] = fsin_o[AW-2 -: 3];   // 幅值高 3 位：二进制斜坡，-：是 SystemVerilog 的位选择语法，往LSB 方向取，一共3位
 
 endmodule

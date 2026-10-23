@@ -99,14 +99,14 @@ module fir #(
 `endif
 
     // ── 编译期位宽 / 结构参数 ──────────────────────────────────────────
-    localparam integer HALF   = N / 2;              // 对称"对数"
-    localparam integer NP     = (N + 1) / 2;        // 乘法器个数（奇数 N 含中心抽头）
+    localparam integer HALF   = N / 2;              // 对称"对数"，默认23个
+    localparam integer NP     = (N + 1) / 2;        // number of products 乘法器个数（奇数 N 含中心抽头），默认24个
     localparam integer PA_W   = IW + 1;             // 预加和位宽
     localparam integer PROD_W = PA_W + CW;          // 乘积全精度位宽
-    localparam integer SUM_W  = PROD_W + $clog2(NP) + 1;
+    localparam integer SUM_W  = PROD_W + $clog2(NP) + 1; //  求和全精度位宽（多 1 位给舍入加的半个 LSB），第二项是 ceil(log2(NP))，因为 NP 个乘积相加可能多出这么多位
     localparam integer FINAL_W = SUM_W + 1;         // 舍入前的额外 1 位
     localparam integer GROUPS = 4;                  // 部分和组数（流水级 3）
-    localparam integer GSUM_N = (NP + GROUPS - 1) / GROUPS;  // 每组最多几个乘积
+    localparam integer GSUM_N = (NP + GROUPS - 1) / GROUPS;  // 每组最多几个乘积，默认6个
     localparam integer LATENCY = 4;                 // 输入 -> 输出延迟（拍）
 
     // ── 系数（常量表，脚本生成）──────────────────────────────────────
@@ -133,12 +133,12 @@ module fir #(
         if (!rst_n) begin
             x_r <= {IW{1'b0}};
             for (di = 0; di < N-1; di = di + 1)
-                dly[di] <= {IW{1'b0}};
+                dly[di] <= {IW{1'b0}}; // 复位时延迟线清零
         end else begin
-            x_r <= x_in;
+            x_r <= x_in; // 当前样本寄存
             dly[0] <= x_r;               // 注意：这里用的是**旧的** x_r
-            for (di = 1; di < N-1; di = di + 1)
-                dly[di] <= dly[di-1];
+            for (di = 1; di < N-1; di = di + 1) //编译时 for 语句变成 N-2 个独立的赋值语句
+                dly[di] <= dly[di-1]; //一个个往前延迟线深处推
         end
     end
 
@@ -152,20 +152,21 @@ module fir #(
     // 预加先符号扩展 1 位再相加（两个 IW 位有符号数相加可能到 IW+1 位）。
     wire signed [PROD_W-1:0] prod [0:NP-1];
 
-    genvar gi;
-    generate
-        for (gi = 0; gi < HALF; gi = gi + 1) begin : g_pair
-            if (gi == 0) begin : g_first
+    genvar gi; //generate index
+    generate //用 generate 是因为要生成若干独立的 assign 语句，不能用 for 循环（for 循环会生成一个数组赋值）。
+        for (gi = 0; gi < HALF; gi = gi + 1) begin : g_pair // generate 块的名字
+            if (gi == 0) begin : g_first //这个条件分支的名字
                 // 第一对：窗口的"新端"是当前样本 x_r，不是延迟线。
                 // 单独写一个分支，是为了**不让 dly[-1] 出现在任何表达式里** ——
                 // 即使三元运算符没选中它，iverilog 展开时也会对 dly[-1] 报越界警告。
-                wire signed [PA_W-1:0] pa = {{1{x_r[IW-1]}}, x_r}
-                                          + {{1{dly[N-2][IW-1]}}, dly[N-2]};
-                assign prod[0] = pa * coef[0];
+                // 下面的 pa 是 pre-adder 的意思，PA_W 位宽。是把成对的两个样本先加起来再乘系数。
+                wire signed [PA_W-1:0] pa = {{1{x_r[IW-1]}}, x_r} //符号扩展一位
+                                          + {{1{dly[N-2][IW-1]}}, dly[N-2]}; //最新的采样和最旧的采样，延迟线的头和尾
+                assign prod[0] = pa * coef[0]; // 加完了再乘系数
             end else begin : g_rest
                 wire signed [IW-1:0] xa = dly[gi-1];
                 wire signed [IW-1:0] xb = dly[N-2-gi];
-                wire signed [PA_W-1:0] pa = {{1{xa[IW-1]}}, xa}
+                wire signed [PA_W-1:0] pa = {{1{xa[IW-1]}}, xa} //相加之前先符号扩展一位
                                           + {{1{xb[IW-1]}}, xb};
                 assign prod[gi] = pa * coef[gi];
             end
@@ -173,8 +174,8 @@ module fir #(
 
         if (N % 2 != 0) begin : g_center
             // 奇数 N 的中心抽头：窗口下标是 (N-1)/2 = HALF，
-            // 也就是 dly[HALF-1]（不是 x_r！中心样本已经是 23 拍之前的事了）。
-            wire signed [IW-1:0] xc = dly[HALF-1];
+            // 也就是 dly[HALF-1]（不是 x_r！中心样本已经是 23 拍之前的事了）。（对于47抽头，HALF=23，中心抽头是 x[n-23]，在 dly[22] 里）
+            wire signed [IW-1:0] xc = dly[HALF-1]; //找到延迟线里对应中心抽头的样本
             wire signed [PA_W-1:0] pa = {{1{xc[IW-1]}}, xc};
             assign prod[NP-1] = pa * coef[HALF];
         end
@@ -190,7 +191,7 @@ module fir #(
                 p_reg[pi] <= {PROD_W{1'b0}};
         end else begin
             for (pi = 0; pi < NP; pi = pi + 1)
-                p_reg[pi] <= prod[pi];
+                p_reg[pi] <= prod[pi]; //之前的 prod 数组是纯逻辑的，把样本和系数用线网连接起来，这一部分才给寄存器p_reg
         end
     end
 
@@ -205,7 +206,7 @@ module fir #(
     // 虽然结果是对的，但 lint 日志会变脏。
     reg signed [SUM_W-1:0] gsum [0:GROUPS-1];
     integer g;
-
+    //这段比较无聊，就是先做部分和的组合逻辑再做寄存器，避免 24 个乘积在一个 always 块里做 5 层加法，时序余量被吃掉。
     function signed [SUM_W-1:0] group_sum;
         input integer base;
         integer t;
@@ -240,8 +241,8 @@ module fir #(
     localparam signed [FINAL_W-1:0] RND_C =
         (ROUND != 0 && SHIFT > 0) ? ({{FINAL_W-1{1'b0}}, 1'b1} <<< RND_SH)
                                   : {FINAL_W{1'b0}};
-
-    wire signed [FINAL_W-1:0] sum_ext = {sum_all[SUM_W-1], sum_all};
+    //上面是做舍入的标准步骤，把数字1左移 RND_SH 位，得到半个 LSB 的值，然后加到 sum_all 上。后面再右移，就变成了四舍五入的效果。ROUND=0 时不加，直接截断。
+    wire signed [FINAL_W-1:0] sum_ext = {sum_all[SUM_W-1], sum_all}; //符号扩展一位，防止加上半个 LSB 后溢出
     wire signed [FINAL_W-1:0] sum_rnd = sum_ext + RND_C;
     wire signed [FINAL_W-1:0] sum_sh  = sum_rnd >>> SHIFT;   // 算术右移 = 向 -inf 取整
 
